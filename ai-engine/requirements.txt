@@ -1,0 +1,15 @@
+# Web server and API
+fastapi==0.109.2
+uvicorn==0.27.1
+python-multipart==0.0.26
+python-dotenv==1.2.2
+requests==2.33.1
+
+# OCR/PDF extraction. EasyOCR/PyTorch are intentionally not installed on the
+# Render web service because loading them exceeds the instance memory limit.
+Pillow>=10.0.0
+pymupdf==1.26.6
+
+# Gemini SDK
+google-genai==1.0.0
+httpx>=0.27.0

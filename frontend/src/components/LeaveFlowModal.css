@@ -1,0 +1,58 @@
+/* ═══════════════════════════════════════════════════════
+   LEAVE FLOW MODAL
+   ═══════════════════════════════════════════════════════ */
+
+.leave-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.leave-modal {
+  max-width: 440px;
+  width: 100%;
+  padding: 32px;
+  text-align: center;
+  border-radius: 16px;
+}
+
+.leave-modal-icon {
+  margin-bottom: 16px;
+}
+
+.leave-modal-title {
+  font-family: var(--font-display);
+  font-size: var(--headline-sm);
+  font-weight: 700;
+  color: var(--on-surface);
+  margin-bottom: 12px;
+}
+
+.leave-modal-desc {
+  font-size: var(--body-md);
+  color: var(--on-surface-variant);
+  line-height: 1.6;
+  margin-bottom: 28px;
+}
+
+.leave-modal-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.leave-modal-btn {
+  width: 100%;
+  padding: 14px 24px;
+  font-size: var(--body-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}

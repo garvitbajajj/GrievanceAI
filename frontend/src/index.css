@@ -1,0 +1,94 @@
+/* ═══════════════════════════════════════════════════════
+   BHASHAFLOW — Global Entry Point
+   ═══════════════════════════════════════════════════════ */
+
+/* Google Fonts: Public Sans (headlines) + Inter (body) */
+@import url('https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Material Symbols Outlined */
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap');
+
+/* Design System Tokens */
+@import './styles/design-tokens.css';
+
+/* Full-height base */
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* ═══════════════════════════════════════════════════════
+   LAYOUT SYSTEM
+   ═══════════════════════════════════════════════════════ */
+
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.layout-main {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  display: flex;
+  flex-direction: column;
+}
+
+.layout-content {
+  flex: 1;
+  margin-top: var(--topbar-height);
+  padding: var(--space-10) var(--space-12);
+  max-width: 1400px;
+}
+
+/* ── Mobile: sidebar is off-screen, remove margin and fix topbar ── */
+@media (max-width: 768px) {
+  .layout-main {
+    margin-left: 0;
+  }
+  .layout-content {
+    padding: var(--space-6) var(--space-4);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   FOOTER (shared across authenticated pages)
+   ═══════════════════════════════════════════════════════ */
+
+.page-footer {
+  margin-top: var(--space-16);
+  padding: var(--space-8) 0;
+  border-top: 1px solid var(--outline-variant);
+  text-align: center;
+}
+
+.page-footer .footer-brand {
+  font-family: var(--font-display);
+  font-size: var(--title-md);
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: var(--space-2);
+}
+
+.page-footer .footer-tagline {
+  font-size: var(--body-sm);
+  color: var(--on-surface-variant);
+  margin-bottom: var(--space-4);
+}
+
+.page-footer .footer-links {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-6);
+}
+
+.page-footer .footer-links a {
+  font-size: var(--label-md);
+  color: var(--outline);
+  transition: color var(--duration-short);
+}
+
+.page-footer .footer-links a:hover {
+  color: var(--primary);
+}

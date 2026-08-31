@@ -1,0 +1,33 @@
+/* ═══════════════════════════════════════════════════════
+   SCROLL PROGRESS BAR — Indian Tricolor
+   ═══════════════════════════════════════════════════════ */
+
+.scroll-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  z-index: 10000;
+  background: rgba(255,255,255,0.06);
+  overflow: hidden;
+}
+
+.scroll-progress-fill {
+  height: 100%;
+  width: 0%;
+  transition: width 0.08s linear;
+  /* Tricolor gradient: saffron → white → green */
+  background: linear-gradient(
+    90deg,
+    #ff9933 0%,
+    #ff9933 33%,
+    #ffffff 33%,
+    #ffffff 66%,
+    #138808 66%,
+    #138808 100%
+  );
+  box-shadow:
+    0 0 8px rgba(255,153,51,0.5),
+    0 0 4px rgba(19,136,8,0.4);
+}

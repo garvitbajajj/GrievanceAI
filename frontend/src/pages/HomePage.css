@@ -1,0 +1,45 @@
+/* ═══════════════════════════════════════════════════════
+   HOMEPAGE — Root wrapper
+   ═══════════════════════════════════════════════════════ */
+
+.homepage {
+  min-height: 100vh;
+  background: #0a0d1a;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+}
+
+/* ═══════════════════════════════════════════════════════
+   HIDE Google Translate Top Bar
+   ═══════════════════════════════════════════════════════ */
+
+/* Hide the Google Translate toolbar that appears at top */
+.goog-te-banner-frame,
+#goog-gt-tt,
+.goog-te-balloon-frame,
+.goog-te-menu-value,
+.goog-te-gadget,
+.VIpgJd-ZVi9od-ORHb-OEVmcd,
+.VIpgJd-ZVi9od-l4eHX-hSRGPd,
+.skiptranslate {
+  display: none !important;
+}
+
+/* Google Translate pushes body down with top style — reset it */
+body {
+  top: 0 !important;
+  position: static !important;
+}
+
+/* Prevent translation of icons, numbers, and decorative elements */
+.notranslate,
+.material-symbols-outlined,
+.hero-float-char,
+.public-stat-card-value,
+.hero-scroll-arrow,
+.hero-chakra-symbol,
+.lang-modal-ashoka,
+.footer-logo-mark {
+  font-variant: no-common-ligatures;
+}

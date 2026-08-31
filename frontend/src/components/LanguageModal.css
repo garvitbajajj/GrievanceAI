@@ -1,0 +1,179 @@
+/* ═══════════════════════════════════════════════════════
+   LANGUAGE MODAL
+   ═══════════════════════════════════════════════════════ */
+
+.lang-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(5, 7, 20, 0.97);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: langOverlayIn 0.4s ease;
+}
+
+@keyframes langOverlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.lang-modal {
+  background: linear-gradient(145deg, #0f1535 0%, #1a1f45 50%, #0d1228 100%);
+  border: 1px solid rgba(255,153,51,0.25);
+  border-radius: 20px;
+  padding: 40px 48px 48px;
+  max-width: 820px;
+  width: 95vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.04);
+  animation: langModalIn 0.5s cubic-bezier(0,0,0.2,1);
+}
+
+@keyframes langModalIn {
+  from { opacity: 0; transform: scale(0.92) translateY(24px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.lang-modal-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.lang-modal-ashoka {
+  font-size: 48px;
+  margin-bottom: 12px;
+  animation: chakraSpin 8s linear infinite;
+  display: inline-block;
+}
+
+@keyframes chakraSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.lang-modal-title {
+  font-family: 'Public Sans', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 6px;
+  letter-spacing: -0.02em;
+}
+
+.lang-modal-subtitle {
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.5;
+}
+
+.lang-tricolor-bar {
+  display: flex;
+  height: 3px;
+  border-radius: 2px;
+  overflow: hidden;
+  margin: 20px auto 0;
+  width: 120px;
+}
+.lang-tricolor-bar span {
+  flex: 1;
+}
+
+.lang-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.lang-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 14px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+.lang-card:hover {
+  background: rgba(255,153,51,0.12);
+  border-color: rgba(255,153,51,0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255,153,51,0.15);
+}
+.lang-card.active {
+  background: rgba(255,153,51,0.2);
+  border-color: #ff9933;
+}
+
+.lang-card-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #fff;
+  display: block;
+  margin-bottom: 2px;
+}
+
+.lang-card-native {
+  font-size: 1.05rem;
+  color: rgba(255,153,51,0.9);
+  display: block;
+}
+
+.lang-modal-cta {
+  text-align: center;
+  margin-top: 8px;
+}
+
+.lang-continue-btn {
+  background: linear-gradient(135deg, #ff9933 0%, #e07010 100%);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 14px 40px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 20px rgba(255,153,51,0.35);
+  letter-spacing: 0.03em;
+}
+.lang-continue-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(255,153,51,0.5);
+}
+
+.lang-skip {
+  display: block;
+  margin-top: 12px;
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.35);
+  cursor: pointer;
+  background: none;
+  border: none;
+  text-decoration: underline;
+}
+.lang-skip:hover { color: rgba(255,255,255,0.6); }
+
+/* ── Mobile Responsiveness ── */
+@media (max-width: 768px) {
+  .lang-modal {
+    padding: 32px 24px 32px;
+  }
+  .lang-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .lang-modal-title {
+    font-size: 1.3rem;
+  }
+  .lang-modal-ashoka {
+    font-size: 36px;
+  }
+}
+
+@media (max-width: 400px) {
+  .lang-grid {
+    grid-template-columns: 1fr;
+  }
+}

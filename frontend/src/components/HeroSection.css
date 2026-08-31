@@ -1,0 +1,272 @@
+/* ═══════════════════════════════════════════════════════
+   HERO SECTION
+   ═══════════════════════════════════════════════════════ */
+
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: linear-gradient(160deg, #05071a 0%, #0d1235 40%, #1a0a05 100%);
+  padding-top: 64px;
+}
+
+/* ── Floating characters canvas ── */
+.hero-float-canvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.hero-float-char {
+  position: absolute;
+  font-family: 'Public Sans', 'Noto Sans Devanagari', sans-serif;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 1);
+  user-select: none;
+  will-change: transform;
+  animation: floatDrift ease-in-out infinite alternate;
+  transition: transform 0.15s ease-out;
+}
+
+@keyframes floatDrift {
+  0%   { transform: translate(0, 0) rotate(0deg); }
+  25%  { transform: translate(8px, -12px) rotate(3deg); }
+  50%  { transform: translate(-6px, -20px) rotate(-2deg); }
+  75%  { transform: translate(10px, -8px) rotate(4deg); }
+  100% { transform: translate(-4px, 6px) rotate(-1deg); }
+}
+
+/* ── Ashoka Chakra Watermark ── */
+.hero-chakra-bg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(70vw, 580px);
+  height: min(70vw, 580px);
+  border-radius: 50%;
+  border: 2px solid rgba(255,153,51,0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: chakraRotateSlow 40s linear infinite;
+}
+
+.hero-chakra-bg::before {
+  content: '';
+  position: absolute;
+  inset: 30px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,153,51,0.04);
+}
+
+.hero-chakra-symbol {
+  font-size: min(24vw, 220px);
+  color: rgba(255,153,51,0.04);
+  line-height: 1;
+}
+
+@keyframes chakraRotateSlow {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* ── Gradient radial glow ── */
+.hero-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+}
+.hero-glow-saffron {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(255,153,51,0.12) 0%, transparent 70%);
+  top: 10%; left: 20%;
+  animation: glowPulse 6s ease-in-out infinite;
+}
+.hero-glow-blue {
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(26,35,126,0.2) 0%, transparent 70%);
+  bottom: 0; right: 10%;
+  animation: glowPulse 8s ease-in-out infinite reverse;
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.1); }
+}
+
+/* ── Hero content ── */
+.hero-content {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  padding: 0 24px;
+  max-width: 900px;
+}
+
+.hero-title {
+  font-family: 'Public Sans', sans-serif;
+  font-size: clamp(2.2rem, 6vw, 4.5rem);
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  margin-bottom: 20px;
+  animation: fadeSlideDown 0.8s ease 0.4s both;
+}
+
+.hero-title-accent {
+  background: linear-gradient(135deg, #ff9933 0%, #ffcc66 50%, #ff6600 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-subtitle {
+  font-size: clamp(0.95rem, 2vw, 1.2rem);
+  color: rgba(255,255,255,0.6);
+  line-height: 1.7;
+  max-width: 580px;
+  margin: 0 auto 36px;
+  animation: fadeSlideDown 0.8s ease 0.6s both;
+}
+
+.hero-cta-group {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+  animation: fadeSlideDown 0.8s ease 0.8s both;
+}
+
+.hero-cta-primary {
+  background: linear-gradient(135deg, #ff9933 0%, #e07010 100%);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 16px 32px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 24px rgba(255,153,51,0.4);
+  letter-spacing: 0.01em;
+}
+.hero-cta-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 36px rgba(255,153,51,0.6);
+  color: #fff;
+}
+
+.hero-cta-secondary {
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.85);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  padding: 16px 32px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  letter-spacing: 0.01em;
+}
+.hero-cta-secondary:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.3);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+/* ── Tricolor bottom bar ── */
+.hero-tricolor {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  height: 4px;
+}
+.hero-tricolor span { flex: 1; }
+
+/* ── Scroll indicator ── */
+.hero-scroll-hint {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: rgba(255,255,255,0.3);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  animation: scrollBounce 2s ease-in-out infinite;
+  z-index: 10;
+}
+.hero-scroll-arrow {
+  font-size: 20px;
+}
+@keyframes scrollBounce {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50%       { transform: translateX(-50%) translateY(6px); }
+}
+
+@keyframes fadeSlideDown {
+  from { opacity: 0; transform: translateY(-16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Mobile Responsiveness ── */
+@media (max-width: 768px) {
+  .hero {
+    padding-top: 80px;
+    padding-bottom: 60px;
+  }
+  
+  /* Reduce density of floating characters on mobile */
+  .hero-float-char:nth-child(odd) {
+    display: none;
+  }
+
+  .hero-chakra-bg {
+    width: min(90vw, 400px);
+    height: min(90vw, 400px);
+  }
+  .hero-chakra-symbol {
+    font-size: min(35vw, 150px);
+  }
+  .hero-title {
+    font-size: clamp(2rem, 8vw, 3rem);
+    line-height: 1.15;
+  }
+  .hero-subtitle {
+    font-size: 1rem;
+    margin-bottom: 28px;
+    padding: 0 10px;
+  }
+  .hero-cta-group {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .hero-cta-primary, .hero-cta-secondary {
+    justify-content: center;
+    width: 100%;
+    padding: 14px 20px;
+  }
+}

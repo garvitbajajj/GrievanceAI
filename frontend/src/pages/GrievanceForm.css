@@ -1,0 +1,203 @@
+/* ═══════════════════════════════════════════════════════
+   GRIEVANCE FORM — Step 3: Location & Contact
+   ═══════════════════════════════════════════════════════ */
+
+.gform-page { padding-bottom: var(--space-16); }
+
+.gform-header {
+  margin-bottom: 32px;
+}
+
+.gform-header h1 {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 8px;
+  letter-spacing: -0.02em;
+}
+
+.gform-header p {
+  font-size: 14px;
+  color: var(--on-surface-variant);
+  max-width: 560px;
+  line-height: 1.7;
+}
+
+.gform-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 32px;
+  max-width: 960px;
+}
+
+.gform-form { max-width: 960px; }
+
+.gform-main {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.gform-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Inputs */
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.input-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--on-surface-variant);
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.input-field {
+  width: 100%;
+  padding: 11px 14px;
+  background: var(--surface-container-high);
+  border: 1.5px solid transparent;
+  border-radius: 10px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--on-surface);
+  transition: all 0.2s;
+  outline: none;
+  appearance: none;
+}
+
+.input-field:focus {
+  background: var(--surface-container-lowest);
+  border-color: var(--primary-container);
+  box-shadow: 0 0 0 3px rgba(26,35,126,0.07);
+}
+
+.input-field::placeholder { color: var(--outline); font-size: 13px; }
+
+select.input-field {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24'%3E%3Cpath fill='%23767683' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+.gform-textarea {
+  resize: vertical;
+  min-height: 90px;
+  line-height: 1.7;
+}
+
+.gform-hint {
+  font-size: 12px;
+  color: var(--on-surface-variant);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Submit btn */
+.gform-submit {
+  width: 100%;
+  padding: 14px 24px;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-container));
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.gform-submit:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,6,102,0.22); }
+.gform-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+.gform-spinner {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: #fff;
+  display: inline-block;
+}
+
+/* Aside info cards */
+.gform-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.gform-info {
+  padding: 20px;
+  border-radius: 14px;
+  border: 1px solid var(--outline-variant);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gform-info-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: var(--surface-container-high);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gform-info h3 {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--on-surface);
+}
+
+.gform-info p {
+  font-size: 13px;
+  color: var(--on-surface-variant);
+  line-height: 1.65;
+}
+
+.gform-info-list {
+  padding-left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.gform-info-list li {
+  font-size: 13px;
+  color: var(--on-surface-variant);
+  line-height: 1.5;
+}
+
+/* Autosave indicator */
+.autosave-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--emerald);
+  font-weight: 500;
+}
+
+@media (max-width: 900px) {
+  .gform-grid { grid-template-columns: 1fr; }
+  .gform-row  { grid-template-columns: 1fr; }
+  .gform-aside { display: none; }
+}

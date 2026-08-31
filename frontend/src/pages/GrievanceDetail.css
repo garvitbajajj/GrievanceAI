@@ -1,0 +1,291 @@
+/* ═══════════════════════════════════════════════════════
+   GRIEVANCE DETAIL — Enhanced UI
+   ═══════════════════════════════════════════════════════ */
+
+.detail-page { padding-bottom: var(--space-16); }
+
+.detail-header { margin-bottom: 28px; }
+
+.detail-header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.detail-header h1 {
+  font-family: 'Plus Jakarta Sans', var(--font-display);
+  font-size: 1.55rem;
+  font-weight: 900;
+  color: var(--primary);
+  letter-spacing: -0.03em;
+  line-height: 1.3;
+}
+
+.detail-badges { display: flex; gap: 8px; flex-shrink: 0; }
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 24px;
+}
+
+.detail-main { display: flex; flex-direction: column; gap: 18px; }
+
+.detail-card,
+.detail-section.card {
+  padding: 24px 26px;
+  border-radius: 18px;
+  background: var(--surface-container-lowest);
+  border: 1px solid var(--outline-variant);
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+}
+
+.detail-card:hover,
+.detail-section.card:hover { box-shadow: 0 8px 28px rgba(0,0,0,0.06); }
+
+.detail-section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--outline-variant);
+}
+
+.detail-section-header h2,
+.detail-section-header h3 {
+  font-family: 'Plus Jakarta Sans', var(--font-display);
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--on-surface);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.detail-section-header .material-symbols-outlined { font-size: 20px; }
+
+.lang-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, rgba(57,73,171,0.12), rgba(57,73,171,0.06));
+  color: #3949ab;
+  border: 1px solid rgba(57,73,171,0.15);
+  padding: 5px 14px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 700;
+  width: fit-content;
+  margin-bottom: 14px;
+}
+
+.original-text {
+  border-left: 4px solid #ff9933;
+  padding: 16px 20px;
+  background: var(--surface-container-low);
+  border-radius: 0 13px 13px 0;
+  font-size: 14px;
+  line-height: 1.85;
+  color: var(--on-surface);
+  font-style: italic;
+  white-space: pre-wrap;
+  word-break: break-word;
+  position: relative;
+}
+
+.original-text::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,153,51,0.03), transparent 60%);
+  pointer-events: none;
+}
+
+.translation-section { margin-top: 16px; }
+
+.translation-section h4 {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--outline);
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  margin-bottom: 7px;
+}
+
+.translation-section p {
+  font-size: 14px;
+  color: var(--on-surface-variant);
+  line-height: 1.75;
+  font-style: italic;
+}
+
+.attachment-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--surface-container-high);
+  border-radius: 99px;
+  margin-top: 12px;
+  border: 1px solid var(--outline-variant);
+  transition: all 0.15s;
+}
+
+.attachment-row:hover { border-color: rgba(57,73,171,0.2); background: var(--surface-container); }
+
+.attachment-name {
+  font-size: 13px;
+  color: #3949ab;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.attachment-name:hover { color: var(--primary); }
+
+/* Admin reply */
+.response-hint {
+  font-size: 13px;
+  color: var(--on-surface-variant);
+  font-style: italic;
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+
+.response-textarea {
+  resize: vertical;
+  min-height: 120px;
+  border-radius: 11px;
+  padding: 12px 14px;
+  width: 100%;
+  font-family: 'Plus Jakarta Sans', var(--font-body);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.ai-analysis-card {
+  border-left: 3px solid #ff9933;
+}
+
+.ai-insight-text {
+  font-size: 14px;
+  color: var(--on-surface-variant);
+  line-height: 1.75;
+}
+
+/* ── Aside ── */
+.detail-aside { display: flex; flex-direction: column; gap: 18px; }
+
+.timeline-card {
+  padding: 24px 26px;
+  border-radius: 18px;
+  background: var(--surface-container-lowest);
+  border: 1px solid var(--outline-variant);
+}
+
+.timeline-card h3 {
+  font-family: 'Plus Jakarta Sans', var(--font-display);
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--on-surface);
+  margin-bottom: 22px;
+  letter-spacing: -0.01em;
+}
+
+.timeline { display: flex; flex-direction: column; }
+
+.timeline-item { display: flex; gap: 13px; }
+
+.timeline-dot-line {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  width: 18px;
+}
+
+.timeline-dot {
+  width: 13px; height: 13px;
+  border-radius: 50%;
+  background: var(--surface-container-high);
+  border: 2px solid var(--outline-variant);
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.timeline-dot.active {
+  background: #ff9933;
+  border-color: #ff9933;
+  box-shadow: 0 0 0 4px rgba(255,153,51,0.18);
+}
+
+.timeline-line {
+  width: 2px;
+  flex: 1;
+  background: var(--outline-variant);
+  margin: 4px 0;
+  border-radius: 2px;
+}
+
+.timeline-content { padding-bottom: 20px; }
+
+.timeline-event {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--on-surface);
+  margin-bottom: 2px;
+}
+
+.timeline-date {
+  font-size: 11px;
+  color: var(--outline);
+  font-weight: 600;
+}
+
+.timeline-detail {
+  font-size: 13px;
+  color: var(--on-surface-variant);
+  margin-top: 6px;
+  font-style: italic;
+  line-height: 1.55;
+  background: var(--surface-container-low);
+  padding: 8px 12px;
+  border-radius: 8px;
+  border-left: 2px solid var(--outline-variant);
+}
+
+/* Geo */
+.geo-card {
+  padding: 22px 24px;
+  border-radius: 16px;
+  background: var(--surface-container-lowest);
+  border: 1px solid var(--outline-variant);
+}
+
+.geo-text {
+  font-size: 13px;
+  color: var(--on-surface-variant);
+  margin: 8px 0 14px;
+  line-height: 1.6;
+}
+
+.geo-map-placeholder {
+  height: 130px;
+  background: var(--surface-container-high);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--outline);
+  font-size: 13px;
+  border: 1px dashed var(--outline-variant);
+}
+
+.geo-map-placeholder .material-symbols-outlined { font-size: 28px; }
+
+@media (max-width: 900px) { .detail-grid { grid-template-columns: 1fr; } }
