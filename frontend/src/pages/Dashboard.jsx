@@ -228,7 +228,7 @@ export default function Dashboard() {
                 <span className="material-symbols-outlined filled" style={{ fontSize: 20, color: 'var(--emerald)' }}>menu_book</span>
                 <h3>Need Guidance?</h3>
               </div>
-              <p>Access the official BhashaFlow handbook for step-by-step grievance filing in your language.</p>
+              <p>Access the official GrievanceAI handbook for step-by-step grievance filing in your language.</p>
               <Link to="/help" className="btn btn-outline" style={{ marginTop: 14, fontSize: 13, padding: '8px 16px', textDecoration: 'none' }}>
                 <span className="material-symbols-outlined" style={{ fontSize: 16 }}>open_in_new</span>
                 View Handbook
@@ -262,7 +262,7 @@ export default function Dashboard() {
 
         {/* Footer */}
         <footer className="page-footer">
-          <div className="footer-brand">BhashaFlow</div>
+          <div className="footer-brand">GrievanceAI</div>
           <p className="footer-tagline">Empowering citizens through transparent governance.</p>
           <div className="footer-links">
             <Link to="/help">Privacy Policy</Link>

@@ -34,12 +34,12 @@ export default function AboutSection() {
       <div className="about-inner">
         {/* Left: Description */}
         <div className="about-text">
-          <p className="about-eyebrow">About BhashaFlow</p>
+          <p className="about-eyebrow">About GrievanceAI</p>
           <h2 className="about-heading">
             Breaking Language Barriers in Public Service
           </h2>
           <p className="about-body">
-            BhashaFlow is India's first AI-driven multilingual grievance redressal system.
+            GrievanceAI is India's first AI-driven multilingual grievance redressal system.
             Citizens can file complaints in <strong style={{ color: '#ff9933' }}>any of 22 scheduled languages</strong>,
             and our AI automatically translates, categorizes, and routes them to the correct
             concerned authority — eliminating the language barrier that has long excluded

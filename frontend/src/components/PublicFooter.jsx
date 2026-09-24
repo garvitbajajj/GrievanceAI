@@ -16,7 +16,7 @@ export default function PublicFooter() {
         <div className="footer-brand-col">
           <div className="footer-logo">
             <div className="footer-logo-mark">भ</div>
-            <span className="footer-brand-name">BhashaFlow</span>
+            <span className="footer-brand-name">GrievanceAI</span>
           </div>
           <p className="footer-brand-desc">
             India's multilingual AI-powered citizen grievance portal. Breaking language barriers
@@ -55,7 +55,7 @@ export default function PublicFooter() {
         <div>
           <div className="footer-col-title">Legal & Info</div>
           <ul className="footer-links-list">
-            <li><a href="#about-section" onClick={scrollTo('about-section')}>About BhashaFlow</a></li>
+            <li><a href="#about-section" onClick={scrollTo('about-section')}>About GrievanceAI</a></li>
             <li><a href="#stats-section" onClick={scrollTo('stats-section')}>Statistics</a></li>
             <li><a href="#cta-section" onClick={scrollTo('cta-section')}>Submit</a></li>
             <li><Link to="/help">Help & FAQ</Link></li>
@@ -66,7 +66,7 @@ export default function PublicFooter() {
       {/* Bottom bar */}
       <div className="footer-bottom">
         <p className="footer-copyright">
-          © 2025 BhashaFlow Governance Initiative. All rights reserved.
+          © 2025 GrievanceAI Governance Initiative. All rights reserved.
         </p>
         <div className="footer-bottom-links">
           <a href="#hero-section" onClick={scrollTo('hero-section')}>Back to Top</a>

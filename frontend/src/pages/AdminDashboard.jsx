@@ -271,7 +271,7 @@ export default function AdminDashboard() {
         </motion.div>
 
         <footer className="page-footer">
-          <p className="footer-tagline">© 2025 BhashaFlow Governance Initiative. All rights reserved.</p>
+          <p className="footer-tagline">© 2025 GrievanceAI Governance Initiative. All rights reserved.</p>
           <div className="footer-links">
             <Link to="/help">Help Center</Link>
             <Link to="/settings">Settings</Link>

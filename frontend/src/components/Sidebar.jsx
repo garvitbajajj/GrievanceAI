@@ -114,7 +114,7 @@ export default function Sidebar({ isAdmin = false }) {
           <span className="material-symbols-outlined filled">language</span>
         </div>
         <div className="sidebar-brand-text">
-          <h2>BhashaFlow</h2>
+          <h2>GrievanceAI</h2>
           <span className="subtitle">{isAdmin ? 'Admin Portal' : 'Citizen Portal'}</span>
         </div>
         {/* Mobile close button */}

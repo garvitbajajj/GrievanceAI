@@ -58,7 +58,7 @@ export default function ResetPassword() {
             <div className="auth-logo-badge">
               <span className="material-symbols-outlined filled">language</span>
             </div>
-            <h1 className="auth-logo-text">BhashaFlow</h1>
+            <h1 className="auth-logo-text">GrievanceAI</h1>
           </motion.div>
 
           <motion.div

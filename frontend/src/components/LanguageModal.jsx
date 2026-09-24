@@ -95,7 +95,7 @@ export default function LanguageModal({ onSelect }) {
       <div className="lang-modal">
         <div className="lang-modal-header">
           <div className="lang-modal-ashoka">☸</div>
-          <h1 className="lang-modal-title">Welcome to BhashaFlow</h1>
+          <h1 className="lang-modal-title">Welcome to GrievanceAI</h1>
           <p className="lang-modal-subtitle">
             अपनी भाषा चुनें · Choose your preferred language to continue
           </p>

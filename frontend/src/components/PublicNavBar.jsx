@@ -34,7 +34,7 @@ export default function PublicNavBar({ selectedLang, onLangChange }) {
       <Link to="/" className="navbar-brand" id="navbar-brand-link">
         <div className="navbar-logo-mark notranslate" translate="no">भ</div>
         <div className="navbar-brand-text">
-          <span className="navbar-brand-name">BhashaFlow</span>
+          <span className="navbar-brand-name">GrievanceAI</span>
           <span className="navbar-brand-tagline">Citizen Grievance Portal</span>
         </div>
       </Link>

@@ -14,7 +14,7 @@ const FAQS = [
   },
   {
     question: "Is my personal data secure?",
-    answer: "Yes. BhashaFlow uses NIC-compliant infrastructure with end-to-end encryption. Your personal identifiers are masked during the AI categorization phase to prevent bias and protect your identity."
+    answer: "Yes. GrievanceAI uses NIC-compliant infrastructure with end-to-end encryption. Your personal identifiers are masked during the AI categorization phase to prevent bias and protect your identity."
   },
   {
     question: "Can I edit a grievance after submission?",
@@ -94,8 +94,8 @@ export default function Help() {
                 <span className="material-symbols-outlined filled" style={{ color: 'var(--emerald)' }}>menu_book</span>
                 <h3>User Handbook</h3>
               </div>
-              <p>Need detailed instructions? Download the official BhashaFlow handbook for a complete step-by-step guide.</p>
-              <a href="/BhashaFlow_User_Handbook.pdf" download className="btn btn-outline" style={{ width: '100%', display: 'flex', justifyContent: 'center', gap: '8px', textDecoration: 'none' }}>
+              <p>Need detailed instructions? Download the official GrievanceAI handbook for a complete step-by-step guide.</p>
+              <a href="/GrievanceAI_User_Handbook.pdf" download className="btn btn-outline" style={{ width: '100%', display: 'flex', justifyContent: 'center', gap: '8px', textDecoration: 'none' }}>
                 <span className="material-symbols-outlined">download</span>
                 Download PDF
               </a>
@@ -112,8 +112,8 @@ export default function Help() {
                 <h3>Contact Support</h3>
               </div>
               <p>Experiencing technical issues or need direct assistance? Our engineering team is here to help you.</p>
-              <a href="mailto:bhashaflow@technicalsupport.com" className="contact-email">
-                bhashaflow@technicalsupport.com
+              <a href="mailto:grievanceai@technicalsupport.com" className="contact-email">
+                grievanceai@technicalsupport.com
               </a>
             </motion.div>
           </aside>

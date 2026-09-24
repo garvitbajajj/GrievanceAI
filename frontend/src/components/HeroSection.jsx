@@ -121,7 +121,7 @@ export default function HeroSection() {
         </h1>
 
         <p className="hero-subtitle">
-          BhashaFlow is a student-built, AI-powered platform for multilingual citizen grievances.
+          GrievanceAI is a student-built, AI-powered platform for multilingual citizen grievances.
           Submit complaints in <strong style={{ color: '#ff9933' }}>any Indian language</strong> — our AI understands, translates, and routes
           them to the right authority, fast and transparently.
         </p>

@@ -226,7 +226,7 @@ export default function AIAnalysis() {
       pdfHtml.innerHTML = `
         <div style="background:linear-gradient(135deg,#1a237e,#283593);padding:28px 36px;color:#fff;display:flex;justify-content:space-between;align-items:center;">
           <div>
-            <div style="font-size:18px;font-weight:800;letter-spacing:-0.02em;">BhashaFlow — Citizen Grievance Portal</div>
+            <div style="font-size:18px;font-weight:800;letter-spacing:-0.02em;">GrievanceAI — Citizen Grievance Portal</div>
             <div style="font-size:11px;opacity:0.8;margin-top:4px;">Multilingual AI-Powered Grievance Management System | Student Initiative</div>
           </div>
           <div style="text-align:right;font-size:11px;opacity:0.85;">
@@ -256,8 +256,8 @@ export default function AIAnalysis() {
           ${portalsHtml}
         </div>
         <div style="background:#1a237e;padding:14px 36px;color:#c8d2ff;font-size:10px;text-align:center;margin-top:24px;">
-          <div>This is a system-generated acknowledgement from BhashaFlow. For disputes, contact your district grievance office.</div>
-          <div style="color:#ff9933;margin-top:4px;font-weight:600;">© BhashaFlow Student Initiative  |  ${dateStr}  |  Ref: ${refNo}</div>
+          <div>This is a system-generated acknowledgement from GrievanceAI. For disputes, contact your district grievance office.</div>
+          <div style="color:#ff9933;margin-top:4px;font-weight:600;">© GrievanceAI Student Initiative  |  ${dateStr}  |  Ref: ${refNo}</div>
         </div>
       `;
 
@@ -292,7 +292,7 @@ export default function AIAnalysis() {
         position += pdfH;
       }
 
-      pdf.save(`BhashaFlow_Grievance_${refNo}.pdf`);
+      pdf.save(`GrievanceAI_Grievance_${refNo}.pdf`);
       setIsDownloading(false);
     } catch (err) {
       console.error('PDF Generation failed:', err);

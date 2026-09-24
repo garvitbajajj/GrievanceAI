@@ -55,7 +55,7 @@ export default function GrievanceDetail() {
       try {
         await api.post(`/api/grievance/${id}/feedback`, { result: feedback });
         if (feedback === 'resolved') {
-          showPopup('success', 'Thank You!', 'We\'re glad your issue is resolved. This grievance has been marked as closed. Thank you for using BhashaFlow.');
+          showPopup('success', 'Thank You!', 'We\'re glad your issue is resolved. This grievance has been marked as closed. Thank you for using GrievanceAI.');
         } else {
           showPopup('warning', 'Feedback Noted', 'We\'ve notified the concerned authority that your issue is still pending. They will follow up shortly.');
         }

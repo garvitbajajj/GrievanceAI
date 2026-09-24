@@ -295,7 +295,7 @@ export default function CitizenAuth() {
             <div className="auth-logo-badge">
               <span className="material-symbols-outlined filled">language</span>
             </div>
-            <h1 className="auth-logo-text">Bhasha<span>Flow</span></h1>
+            <h1 className="auth-logo-text">Grievance<span>AI</span></h1>
           </motion.div>
 
           {/* Language ticker */}
@@ -545,7 +545,7 @@ export default function CitizenAuth() {
                 className="auth-form"
               >
                 <div className="form-header">
-                  <h2>Join BhashaFlow</h2>
+                  <h2>Join GrievanceAI</h2>
                   <p>Register to raise issues in your native language.</p>
                 </div>
 
@@ -641,7 +641,7 @@ export default function CitizenAuth() {
           <a href="#" onClick={(e) => openModal(e, 'privacy')}>Privacy Policy</a>
           <a href="#" onClick={(e) => openModal(e, 'terms')}>Terms of Service</a>
           <a href="#" onClick={(e) => openModal(e, 'support')}>Contact Support</a>
-          <p>© 2025 BhashaFlow — A Multilingual Civic Engagement Initiative.</p>
+          <p>© 2025 GrievanceAI — A Multilingual Civic Engagement Initiative.</p>
         </div>
       </div>
 
@@ -668,23 +668,23 @@ export default function CitizenAuth() {
               {modalContent === 'privacy' && (
                 <>
                   <h3>Privacy Policy</h3>
-                  <p>Welcome to <strong>BhashaFlow</strong>. This Privacy Policy describes how we handle the information you provide when using our Multilingual Grievance Redressal platform. We recognize that digital sovereignty is a fundamental right, and your privacy is our highest priority.</p>
+                  <p>Welcome to <strong>GrievanceAI</strong>. This Privacy Policy describes how we handle the information you provide when using our Multilingual Grievance Redressal platform. We recognize that digital sovereignty is a fundamental right, and your privacy is our highest priority.</p>
                   <ul>
                     <li><strong>Data Collection:</strong> We collect your grievance text, selected language, and optional audio inputs solely for processing and resolving your issues.</li>
                     <li><strong>AI & Translation:</strong> Our AI-powered engine translates and routes your grievance to the correct government department. We ensure all NLP (Natural Language Processing) and translation models process your data securely.</li>
                     <li><strong>Data Protection:</strong> All records are securely stored on compliant infrastructure with end-to-end encryption. Your personal identifiers are masked during the AI categorization phase to prevent bias and protect your identity.</li>
                   </ul>
-                  <p>By using BhashaFlow, you agree to our data practices designed to empower your voice while safeguarding your personal information.</p>
+                  <p>By using GrievanceAI, you agree to our data practices designed to empower your voice while safeguarding your personal information.</p>
                 </>
               )}
               {modalContent === 'terms' && (
                 <>
                   <h3>Terms of Service</h3>
-                  <p>By accessing and using <strong>BhashaFlow</strong>, you agree to comply with our Terms of Service. Our mission is to bridge the language gap between citizens and administration through advanced technology.</p>
+                  <p>By accessing and using <strong>GrievanceAI</strong>, you agree to comply with our Terms of Service. Our mission is to bridge the language gap between citizens and administration through advanced technology.</p>
                   <ul>
-                    <li><strong>Appropriate Use:</strong> BhashaFlow must only be used to file legitimate grievances, feedback, or civic issues. Abuse, spamming, or filing false reports may lead to account suspension.</li>
+                    <li><strong>Appropriate Use:</strong> GrievanceAI must only be used to file legitimate grievances, feedback, or civic issues. Abuse, spamming, or filing false reports may lead to account suspension.</li>
                     <li><strong>System Integrity:</strong> Users are prohibited from attempting to disrupt our AI-routing mechanisms, API endpoints, or database infrastructure.</li>
-                    <li><strong>Service Availability:</strong> While we strive for 99.9% uptime, BhashaFlow is provided "as is". We reserve the right to perform scheduled maintenance to improve our language models and routing algorithms.</li>
+                    <li><strong>Service Availability:</strong> While we strive for 99.9% uptime, GrievanceAI is provided "as is". We reserve the right to perform scheduled maintenance to improve our language models and routing algorithms.</li>
                   </ul>
                   <p>Your continuous use of the platform constitutes your acceptance of these terms, ensuring a respectful and efficient environment for all citizens.</p>
                 </>
@@ -692,11 +692,11 @@ export default function CitizenAuth() {
               {modalContent === 'support' && (
                 <>
                   <h3>Contact Support</h3>
-                  <p>Experiencing technical difficulties or need help navigating BhashaFlow? Our support team is here to assist you.</p>
+                  <p>Experiencing technical difficulties or need help navigating GrievanceAI? Our support team is here to assist you.</p>
                   <p>Whether you're facing issues with account creation, language translation errors, or grievance tracking, please provide us with detailed information so our engineers can quickly resolve the problem.</p>
                   <div style={{ marginTop: '24px', padding: '16px', background: 'var(--surface-container)', borderRadius: '8px' }}>
                     <strong>Technical Support Email:</strong><br/>
-                    <a href="mailto:bhashaflow@technicalsupport.com" style={{ fontSize: '1.1em', fontWeight: 'bold' }}>bhashaflow@technicalsupport.com</a>
+                    <a href="mailto:grievanceai@technicalsupport.com" style={{ fontSize: '1.1em', fontWeight: 'bold' }}>grievanceai@technicalsupport.com</a>
                   </div>
                   <p style={{ marginTop: '16px', fontSize: '0.9em', color: 'var(--on-surface-variant)' }}>Our standard response time is 24-48 hours during regular business days.</p>
                 </>

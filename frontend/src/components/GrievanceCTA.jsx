@@ -56,7 +56,7 @@ export default function GrievanceCTA() {
       <div className="cta-inner">
         <div className="cta-eyebrow">
           <span className="cta-eyebrow-dot" />
-          Citizen Grievance Portal · BhashaFlow
+          Citizen Grievance Portal · GrievanceAI
         </div>
 
         {/* Rotating multilingual text */}

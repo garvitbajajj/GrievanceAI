@@ -19,7 +19,7 @@ def create_handbook(output_path):
     # Title
     c.setFont("Helvetica-Bold", 24)
     c.setFillColor(colors.HexColor("#1a237e"))
-    c.drawString(50, height - 80, "BhashaFlow User Handbook")
+    c.drawString(50, height - 80, "GrievanceAI User Handbook")
     
     # Subtitle
     c.setFont("Helvetica", 14)
@@ -32,7 +32,7 @@ def create_handbook(output_path):
     text = c.beginText(50, height - 160)
     
     lines = [
-        "Welcome to BhashaFlow!",
+        "Welcome to GrievanceAI!",
         "",
         "This platform is designed to bridge the gap between citizens and government by",
         "allowing you to submit grievances in your preferred language.",
@@ -49,7 +49,7 @@ def create_handbook(output_path):
         "You can review the AI-assigned department and track the status of your",
         "grievance directly from your dashboard.",
         "",
-        "For any technical issues, please contact bhashaflow@technicalsupport.com"
+        "For any technical issues, please contact grievanceai@technicalsupport.com"
     ]
     
     for line in lines:
@@ -60,11 +60,11 @@ def create_handbook(output_path):
     # Footer
     c.setFont("Helvetica-Oblique", 10)
     c.setFillColor(colors.gray)
-    c.drawString(50, 50, "BhashaFlow Platform - Official Documentation")
+    c.drawString(50, 50, "GrievanceAI Platform - Official Documentation")
     
     c.save()
     print(f"Generated PDF at {output_path}")
 
 if __name__ == "__main__":
-    out_path = os.path.join("frontend", "public", "BhashaFlow_User_Handbook.pdf")
+    out_path = os.path.join("frontend", "public", "GrievanceAI_User_Handbook.pdf")
     create_handbook(out_path)
