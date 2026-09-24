@@ -1,11 +1,15 @@
-import nodemailer from 'nodemailer';
+import nodemailer from 'npm:nodemailer@6.9.16';
 
 /**
  * Gmail SMTP Transport
  * Uses App Password (NOT your actual Gmail password).
  * Generate at: Google Account → Security → 2FA → App Passwords → Mail
+ * Port 465 (implicit TLS) because Supabase Edge Functions block outbound 25/587.
  */
-const MAIL_ENABLED = !!(process.env.GMAIL_USER && process.env.GMAIL_PASS);
+const GMAIL_USER = Deno.env.get('GMAIL_USER');
+const GMAIL_PASS = Deno.env.get('GMAIL_PASS');
+const FRONTEND_URL = Deno.env.get('FRONTEND_URL') || 'http://localhost:3000';
+const MAIL_ENABLED = !!(GMAIL_USER && GMAIL_PASS);
 
 if (!MAIL_ENABLED) {
   console.warn('⚠️  [Mailer] GMAIL_USER or GMAIL_PASS not set — email notifications disabled.');
@@ -13,11 +17,10 @@ if (!MAIL_ENABLED) {
 
 const transporter = MAIL_ENABLED
   ? nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_PASS
-      }
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
+      auth: { user: GMAIL_USER, pass: GMAIL_PASS }
     })
   : null;
 
@@ -33,17 +36,17 @@ async function _send(options) {
 /**
  * Send follow-up email to citizen asking if their grievance is resolved.
  * @param {string} to       — Citizen's email address
- * @param {string} grievanceId — MongoDB ObjectId of the grievance
+ * @param {string} grievanceId — UUID of the grievance
  * @param {string} category — Grievance category (e.g. 'water')
  * @param {string} title    — Short title of the grievance
  */
 export async function sendFollowUpEmail(to, grievanceId, category, title) {
-  const frontendBase = process.env.FRONTEND_URL || 'http://localhost:3000';
+  const frontendBase = FRONTEND_URL;
   const resolvedLink = `${frontendBase}/grievance/${grievanceId}?feedback=resolved`;
   const pendingLink = `${frontendBase}/grievance/${grievanceId}?feedback=pending`;
 
   const mailOptions = {
-    from: `"BhashaFlow" <${process.env.GMAIL_USER}>`,
+    from: `"BhashaFlow" <${GMAIL_USER}>`,
     to,
     subject: `Is your grievance resolved? — BhashaFlow #GRV-${grievanceId}`,
     html: `
@@ -105,7 +108,7 @@ export async function sendFollowUpEmail(to, grievanceId, category, title) {
  * Includes the admin's response (optionally translated) and Yes/No feedback buttons.
  *
  * @param {string} to              — Citizen's email
- * @param {string} grievanceId     — MongoDB ObjectId
+ * @param {string} grievanceId     — UUID of the grievance
  * @param {string} category        — Grievance category
  * @param {string} title           — Grievance title
  * @param {string} adminRemark     — Admin's response text
@@ -113,13 +116,13 @@ export async function sendFollowUpEmail(to, grievanceId, category, title) {
  * @param {string} lang            — Detected language code (e.g. 'hi', 'ta')
  */
 export async function sendResolutionEmail(to, grievanceId, category, title, adminRemark, translatedRemark, lang) {
-  const frontendBase   = process.env.FRONTEND_URL || 'http://localhost:3000';
+  const frontendBase   = FRONTEND_URL;
   const resolvedLink   = `${frontendBase}/grievance/${grievanceId}?feedback=resolved`;
   const pendingLink    = `${frontendBase}/grievance/${grievanceId}?feedback=not_resolved`;
   const isNative       = translatedRemark && translatedRemark !== adminRemark;
 
   const mailOptions = {
-    from: `"BhashaFlow" <${process.env.GMAIL_USER}>`,
+    from: `"BhashaFlow" <${GMAIL_USER}>`,
     to,
     subject: `Your Grievance Has Been Resolved — BhashaFlow #GRV-${String(grievanceId).slice(-8).toUpperCase()}`,
     html: `
@@ -188,63 +191,6 @@ export async function sendResolutionEmail(to, grievanceId, category, title, admi
 
   const info = await _send(mailOptions);
   console.log(`📧 Resolution email sent to ${to} — MessageID: ${info.messageId}`);
-  return info;
-}
-
-/**
- * Send a password reset email with a unique token link.
- * @param {string} to - Citizen's email address
- * @param {string} token - The reset token
- */
-export async function sendPasswordResetEmail(to, token) {
-  const frontendBase = process.env.FRONTEND_URL || 'http://localhost:3000';
-  const resetLink = `${frontendBase}/reset-password/${token}`;
-
-  const mailOptions = {
-    from: `"BhashaFlow Support" <${process.env.GMAIL_USER}>`,
-    to,
-    subject: `Password Reset Request — BhashaFlow`,
-    html: `
-      <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 10px 10px 0 0;">
-          <h1 style="color: #fff; margin: 0; font-size: 22px;">🇮🇳 BhashaFlow</h1>
-          <p style="color: rgba(255,255,255,0.85); margin: 5px 0 0;">Multilingual Citizen Grievance Portal</p>
-        </div>
-        
-        <div style="background: #f9f9f9; padding: 25px; border: 1px solid #e0e0e0;">
-          <h2 style="color: #333; margin-top: 0;">Reset Your Password</h2>
-          
-          <p style="color: #555; line-height: 1.6;">
-            We received a request to reset your password for your BhashaFlow account.
-          </p>
-          
-          <p style="color: #555; line-height: 1.6;">
-            Click the button below to set a new password. This link is valid for 1 hour.
-          </p>
-          
-          <div style="text-align: center; margin: 25px 0;">
-            <a href="${resetLink}" 
-               style="background: #4CAF50; color: #fff; padding: 12px 30px; text-decoration: none; border-radius: 6px; margin: 0 10px; display: inline-block; font-weight: bold;">
-               Reset Password
-            </a>
-          </div>
-          
-          <p style="color: #888; font-size: 12px; margin-top: 20px;">
-            If you did not request a password reset, you can safely ignore this email. Your password will remain unchanged.
-          </p>
-        </div>
-        
-        <div style="background: #333; padding: 15px; border-radius: 0 0 10px 10px; text-align: center;">
-          <p style="color: #aaa; margin: 0; font-size: 12px;">
-            BhashaFlow — Secure Identity Management
-          </p>
-        </div>
-      </div>
-    `
-  };
-
-  const info = await _send(mailOptions);
-  console.log(`📧 Password reset email sent to ${to} — MessageID: ${info.messageId}`);
   return info;
 }
 

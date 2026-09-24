@@ -1,0 +1,5 @@
+# Supabase CLI config. Deploy with: supabase functions deploy api
+[functions.api]
+# The function verifies Supabase Auth JWTs itself (see auth() in index.ts),
+# and /api/public/* + /api/cron/* must be reachable without one.
+verify_jwt = false
