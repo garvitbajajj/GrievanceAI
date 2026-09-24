@@ -14,9 +14,6 @@ __pycache__/
 .venv/
 venv/
 
-# ── Docker ─────────────────────────────────────────────
-docker-compose.override.yml
-
 # ── OS & Editor ────────────────────────────────────────
 .DS_Store
 Thumbs.db
