@@ -1,5 +1,5 @@
 /**
- * BhashaFlow Hyper-Granular Portal Directory and Routing
+ * GrievanceAI Hyper-Granular Portal Directory and Routing
  */
 
 export const NATIONAL_PORTALS = [

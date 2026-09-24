@@ -85,6 +85,16 @@ create table public.training_data (
   confirmed_at       timestamptz not null default now()
 );
 
+-- Tables aren't auto-exposed to the Data API; only the Edge Function's
+-- service role gets access. anon/authenticated get nothing.
+grant usage on schema public to service_role;
+grant select, insert, update, delete
+  on public.profiles, public.grievances, public.ai_analyses, public.status_updates, public.training_data
+  to service_role;
+revoke all
+  on public.profiles, public.grievances, public.ai_analyses, public.status_updates, public.training_data
+  from anon, authenticated;
+
 alter table public.profiles       enable row level security;
 alter table public.grievances     enable row level security;
 alter table public.ai_analyses    enable row level security;

@@ -46,13 +46,13 @@ export async function sendFollowUpEmail(to, grievanceId, category, title) {
   const pendingLink = `${frontendBase}/grievance/${grievanceId}?feedback=pending`;
 
   const mailOptions = {
-    from: `"BhashaFlow" <${GMAIL_USER}>`,
+    from: `"GrievanceAI" <${GMAIL_USER}>`,
     to,
-    subject: `Is your grievance resolved? — BhashaFlow #GRV-${grievanceId}`,
+    subject: `Is your grievance resolved? — GrievanceAI #GRV-${grievanceId}`,
     html: `
       <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 10px 10px 0 0;">
-          <h1 style="color: #fff; margin: 0; font-size: 22px;">🇮🇳 BhashaFlow</h1>
+          <h1 style="color: #fff; margin: 0; font-size: 22px;">🇮🇳 GrievanceAI</h1>
           <p style="color: rgba(255,255,255,0.85); margin: 5px 0 0;">Multilingual Citizen Grievance Portal</p>
         </div>
         
@@ -60,7 +60,7 @@ export async function sendFollowUpEmail(to, grievanceId, category, title) {
           <h2 style="color: #333; margin-top: 0;">Follow-Up on Your Grievance</h2>
           
           <p style="color: #555; line-height: 1.6;">
-            Namaste! We are following up on your grievance submitted to BhashaFlow.
+            Namaste! We are following up on your grievance submitted to GrievanceAI.
           </p>
           
           <div style="background: #fff; border-left: 4px solid #667eea; padding: 15px; margin: 15px 0; border-radius: 4px;">
@@ -91,7 +91,7 @@ export async function sendFollowUpEmail(to, grievanceId, category, title) {
         
         <div style="background: #333; padding: 15px; border-radius: 0 0 10px 10px; text-align: center;">
           <p style="color: #aaa; margin: 0; font-size: 12px;">
-            BhashaFlow — NIIT University Capstone Project 2024
+            GrievanceAI — NIIT University Capstone Project 2024
           </p>
         </div>
       </div>
@@ -122,15 +122,15 @@ export async function sendResolutionEmail(to, grievanceId, category, title, admi
   const isNative       = translatedRemark && translatedRemark !== adminRemark;
 
   const mailOptions = {
-    from: `"BhashaFlow" <${GMAIL_USER}>`,
+    from: `"GrievanceAI" <${GMAIL_USER}>`,
     to,
-    subject: `Your Grievance Has Been Resolved — BhashaFlow #GRV-${String(grievanceId).slice(-8).toUpperCase()}`,
+    subject: `Your Grievance Has Been Resolved — GrievanceAI #GRV-${String(grievanceId).slice(-8).toUpperCase()}`,
     html: `
       <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
         <!-- Header -->
         <div style="background: linear-gradient(135deg, #1a237e 0%, #3949ab 100%); padding: 24px; border-radius: 12px 12px 0 0; text-align: center;">
           <p style="font-size: 28px; margin: 0;">☸</p>
-          <h1 style="color: #fff; margin: 8px 0 4px; font-size: 20px; letter-spacing: -0.5px;">BhashaFlow</h1>
+          <h1 style="color: #fff; margin: 8px 0 4px; font-size: 20px; letter-spacing: -0.5px;">GrievanceAI</h1>
           <p style="color: rgba(255,255,255,0.7); margin: 0; font-size: 13px;">Student Initiative — Multilingual Citizen Grievance Portal</p>
         </div>
 
@@ -182,7 +182,7 @@ export async function sendResolutionEmail(to, grievanceId, category, title, admi
         <!-- Footer -->
         <div style="background: #1a237e; padding: 14px; border-radius: 0 0 12px 12px; text-align: center;">
           <p style="color: rgba(255,255,255,0.5); margin: 0; font-size: 11px;">
-            BhashaFlow — NIIT University Student Capstone Project &nbsp;|&nbsp; Ref: GRV-${String(grievanceId).slice(-8).toUpperCase()}
+            GrievanceAI — NIIT University Student Capstone Project &nbsp;|&nbsp; Ref: GRV-${String(grievanceId).slice(-8).toUpperCase()}
           </p>
         </div>
       </div>
