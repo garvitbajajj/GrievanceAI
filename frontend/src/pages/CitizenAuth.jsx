@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import PopupModal from '../components/PopupModal';
 import api from '../utils/api';
+import { supabase } from '../utils/supabase';
+import { saveProfile, homeForRole } from '../utils/api';
 import './CitizenAuth.css';
 
 /* ── Animation variants ──────────────────────────────────── */
@@ -181,30 +183,30 @@ export default function CitizenAuth() {
     }
   }, [searchParams]);
 
-  const saveSession = (data) => {
-    localStorage.setItem('token',    data.token);
-    localStorage.setItem('userName', data.user.name);
-    localStorage.setItem('userRole', data.user.role);
-    localStorage.setItem('userEmail', data.user.email || '');
-    if (data.user.preferred_language) {
-      localStorage.setItem('language', data.user.preferred_language);
-    }
-  };
-
-  const redirectByRole = (role) => {
-    if (role === 'authority' || role === 'admin') navigate('/admin');
-    else navigate('/dashboard');
-  };
-
   const onLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const { data } = await api.post('/api/auth/login', { email: lEmail, password: lPass });
-      saveSession(data);
-      redirectByRole(data.user.role);
+      const { error } = await supabase.auth.signInWithPassword({ email: lEmail, password: lPass });
+      if (error) throw error;
+
+      // Accounts with 2FA enabled need the authenticator code before the API accepts them.
+      const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+      if (aal.nextLevel === 'aal2' && aal.currentLevel !== 'aal2') {
+        // ponytail: native prompt; swap for a styled modal if 2FA sees real use.
+        const code = window.prompt('Enter the 6-digit code from your authenticator app');
+        const { data: factors } = await supabase.auth.mfa.listFactors();
+        const { error: mfaError } = await supabase.auth.mfa.challengeAndVerify({ factorId: factors.totp[0].id, code: code || '' });
+        if (mfaError) {
+          await supabase.auth.signOut();
+          throw new Error('Invalid 2FA code. Please try again.');
+        }
+      }
+
+      const user = await saveProfile();
+      navigate(homeForRole(user.role));
     } catch (err) {
-      showPopup('error', 'Login Failed', err.response?.data?.message || 'Invalid credentials. Please check your email and password.');
+      showPopup('error', 'Login Failed', err.response?.data?.message || err.message || 'Invalid credentials. Please check your email and password.');
     } finally {
       setLoading(false);
     }
@@ -214,11 +216,14 @@ export default function CitizenAuth() {
     e.preventDefault();
     setLoading(true);
     try {
-      const { data } = await api.post('/api/auth/forgot-password', { email: fEmail });
-      showPopup('success', 'Reset Link Sent', data.message || 'A password reset link has been sent to your email address.');
+      const { error } = await supabase.auth.resetPasswordForEmail(fEmail, {
+        redirectTo: `${window.location.origin}/reset-password/recovery`,
+      });
+      if (error) throw error;
+      showPopup('success', 'Reset Link Sent', 'If that email is registered, a password reset link has been sent.');
       setMode("login");
     } catch (err) {
-      showPopup('error', 'Request Failed', err.response?.data?.message || 'Failed to send reset link. Please try again.');
+      showPopup('error', 'Request Failed', err.message || 'Failed to send reset link. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -239,8 +244,12 @@ export default function CitizenAuth() {
     }
   };
 
-  const onGoogleLogin = () => {
-    window.location.href = `${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/api/auth/google`;
+  const onGoogleLogin = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: `${window.location.origin}/auth/oauth-success` },
+    });
+    if (error) setOauthError('Google sign-in is not available right now. Please use email/password.');
   };
 
   return (

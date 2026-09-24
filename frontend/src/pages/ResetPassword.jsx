@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import PopupModal from '../components/PopupModal';
-import api from '../utils/api';
+import { supabase } from '../utils/supabase';
 import './CitizenAuth.css';
 
 const pageVariants = {
@@ -17,7 +17,6 @@ export default function ResetPassword() {
   const [showC, setShowC] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { token } = useParams();
   const navigate = useNavigate();
 
   // Popup state
@@ -33,8 +32,11 @@ export default function ResetPassword() {
     }
     setLoading(true);
     try {
-      const { data } = await api.post(`/api/auth/reset-password/${token}`, { password });
-      showPopup('success', 'Password Reset', data.message || 'Your password has been reset successfully. Redirecting to login…');
+      // The recovery link signs the user in; supabase-js reads it from the URL on load.
+      const { error } = await supabase.auth.updateUser({ password });
+      if (error) throw error;
+      await supabase.auth.signOut();
+      showPopup('success', 'Password Reset', 'Your password has been reset successfully. Redirecting to login…');
       setTimeout(() => navigate('/auth'), 2500);
     } catch (err) {
       showPopup('error', 'Reset Failed', err.response?.data?.message || 'Could not reset password. The link may have expired.');

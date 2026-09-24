@@ -205,7 +205,7 @@ export default function GrievanceDetail() {
               {grievance.image_url && (
                 <div className="attachment-row" style={{ marginTop: '16px' }}>
                   <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'var(--outline)' }}>image</span>
-                  <a href={`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000'}/${grievance.image_url}`}
+                  <a href={grievance.image_url}
                      target="_blank" rel="noreferrer" className="attachment-name">
                     View Attached Image
                   </a>
@@ -214,7 +214,7 @@ export default function GrievanceDetail() {
               {grievance.audio_url && (
                 <div className="attachment-row" style={{ marginTop: '8px' }}>
                   <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'var(--outline)' }}>audio_file</span>
-                  <a href={`/api/grievance/${grievance._id}/audio`}
+                  <a href={grievance.audio_url}
                      target="_blank" rel="noreferrer" className="attachment-name">
                     Play Audio Recording
                   </a>

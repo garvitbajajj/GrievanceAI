@@ -2,49 +2,35 @@
  * OAuthSuccess.jsx
  * Route: /auth/oauth-success
  *
- * Google redirects the browser here after OAuth with the JWT in the URL hash:
- *   http://localhost:3000/auth/oauth-success#token=xxx&name=Rajesh&role=citizen
- *
- * This page reads the hash, stores the token, and navigates to /dashboard.
+ * Supabase redirects here after Google sign-in. supabase-js picks the session
+ * out of the URL on load; we then load the profile and route by role.
  * It is never shown to the user — it flashes for one frame at most.
  */
 
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { supabase } from '../utils/supabase';
+import { saveProfile, homeForRole } from '../utils/api';
 
 export default function OAuthSuccess() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // window.location.hash → "#token=xxx&name=Rajesh&role=citizen"
-    const hash = window.location.hash.slice(1); // strip the leading '#'
-    const params = new URLSearchParams(hash);
-
-    const token = params.get('token');
-    const name  = params.get('name');
-    const role  = params.get('role');
-
-    if (!token) {
-      // Something went wrong — send back to auth with an error flag
-      navigate('/auth?error=oauth_failed', { replace: true });
-      return;
-    }
-
-    // Store exactly the same keys the rest of the app uses
-    localStorage.setItem('token', token);
-    localStorage.setItem('userName', decodeURIComponent(name || 'Citizen'));
-    localStorage.setItem('userRole', role || 'citizen');
-
-    // Clear the hash from the URL so the token is never visible in history
-    window.history.replaceState(null, '', window.location.pathname);
-
-    // Redirect to the right dashboard based on role
-    if (role === 'authority' || role === 'admin') {
-      navigate('/admin', { replace: true });
-    } else {
-      navigate('/dashboard', { replace: true });
-    }
+    (async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate('/auth?error=oauth_failed', { replace: true });
+        return;
+      }
+      localStorage.setItem('token', session.access_token);
+      try {
+        const user = await saveProfile();
+        navigate(homeForRole(user.role), { replace: true });
+      } catch {
+        navigate('/auth?error=oauth_failed', { replace: true });
+      }
+    })();
   }, [navigate]);
 
   return (

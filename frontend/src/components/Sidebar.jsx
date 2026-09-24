@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useGrievanceFlow } from '../context/GrievanceFlowContext';
 import LeaveFlowModal from './LeaveFlowModal';
 import api from '../utils/api';
+import { supabase } from '../utils/supabase';
 import './Sidebar.css';
 
 let isFirstSidebarLoad = true;
@@ -61,7 +62,8 @@ export default function Sidebar({ isAdmin = false }) {
     doLogout();
   };
 
-  const doLogout = () => {
+  const doLogout = async () => {
+    await supabase.auth.signOut();
     localStorage.removeItem('token');
     localStorage.removeItem('userName');
     localStorage.removeItem('userRole');

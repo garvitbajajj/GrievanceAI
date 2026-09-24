@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import DashboardLayout from '../components/DashboardLayout';
 import PopupModal from '../components/PopupModal';
 import api from '../utils/api';
+import { supabase } from '../utils/supabase';
 import './Settings.css';
 
 export default function Settings() {
@@ -24,6 +25,7 @@ export default function Settings() {
   const [show2FAModal, setShow2FAModal]         = useState(false);
   const [qrCodeUrl, setQrCodeUrl]               = useState('');
   const [twoFactorToken, setTwoFactorToken]     = useState('');
+  const [factorId, setFactorId]                 = useState('');
   const [twoFactorLoading, setTwoFactorLoading] = useState(false);
   const [is2FAEnabled, setIs2FAEnabled]         = useState(false);
 
@@ -87,7 +89,7 @@ export default function Settings() {
   const handleSave = async (e) => {
     e.preventDefault();
     try {
-      // Save profile to MongoDB via backend
+      // Save profile via the API
       const res = await api.put('/api/auth/profile', {
         name: userName,
         email: email,
@@ -136,8 +138,10 @@ export default function Settings() {
   const handleGenerate2FA = async () => {
     setTwoFactorLoading(true);
     try {
-      const res = await api.post('/api/auth/2fa/generate');
-      setQrCodeUrl(res.data.qrCodeUrl);
+      const { data, error } = await supabase.auth.mfa.enroll({ factorType: 'totp' });
+      if (error) throw error;
+      setFactorId(data.id);
+      setQrCodeUrl(data.totp.qr_code);
       setShow2FAModal(true);
     } catch {
       showPopup('error', '2FA Setup Failed', 'Could not generate 2FA setup. Please try again later.');
@@ -150,12 +154,13 @@ export default function Settings() {
     e.preventDefault();
     setTwoFactorLoading(true);
     try {
-      await api.post('/api/auth/2fa/verify', { token: twoFactorToken });
+      const { error } = await supabase.auth.mfa.challengeAndVerify({ factorId, code: twoFactorToken });
+      if (error) throw error;
       showPopup('success', '2FA Enabled', 'Two-Factor Authentication is now active on your account.');
       setIs2FAEnabled(true);
       setShow2FAModal(false);
     } catch (err) {
-      showPopup('error', 'Invalid Code', err.response?.data?.message || 'The 6-digit code was incorrect. Please try again.');
+      showPopup('error', 'Invalid Code', err.message || 'The 6-digit code was incorrect. Please try again.');
     } finally {
       setTwoFactorLoading(false);
     }

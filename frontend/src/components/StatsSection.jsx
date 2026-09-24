@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import api from '../utils/api';
 import './StatsSection.css';
 
 // Count-up hook (reused from AdminDashboard pattern)
@@ -73,9 +72,7 @@ export default function StatsSection() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const baseUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
-        
-        const res = await fetch(`${baseUrl}/api/public/stats`);
+        const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/api/public/stats`);
         
         if (res.ok) {
           const d = await res.json();
