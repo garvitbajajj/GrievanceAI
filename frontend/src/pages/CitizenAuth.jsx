@@ -668,13 +668,13 @@ export default function CitizenAuth() {
               {modalContent === 'privacy' && (
                 <>
                   <h3>Privacy Policy</h3>
-                  <p>Welcome to <strong>GrievanceAI</strong>. This Privacy Policy describes how we handle the information you provide when using our Multilingual Grievance Redressal platform. We recognize that digital sovereignty is a fundamental right, and your privacy is our highest priority.</p>
+                  <p><strong>GrievanceAI</strong> stores your account details and grievances in Supabase and sends grievance text, recordings and attachments to Google's Gemini API to translate and categorise them.</p>
                   <ul>
-                    <li><strong>Data Collection:</strong> We collect your grievance text, selected language, and optional audio inputs solely for processing and resolving your issues.</li>
-                    <li><strong>AI & Translation:</strong> Our AI-powered engine translates and routes your grievance to the correct government department. We ensure all NLP (Natural Language Processing) and translation models process your data securely.</li>
-                    <li><strong>Data Protection:</strong> All records are securely stored on compliant infrastructure with end-to-end encryption. Your personal identifiers are masked during the AI categorization phase to prevent bias and protect your identity.</li>
+                    <li><strong>Data Collection:</strong> Your name, email, grievance content and the contact/location details you enter.</li>
+                    <li><strong>AI Processing:</strong> Grievances are processed by Google Gemini for transcription, translation and routing.</li>
+                    <li><strong>Storage:</strong> Attachments are kept in a private bucket and only served through short-lived signed links. We never sell your data.</li>
                   </ul>
-                  <p>By using GrievanceAI, you agree to our data practices designed to empower your voice while safeguarding your personal information.</p>
+                  <p>Read the full <a href="/privacy.html" target="_blank" rel="noreferrer">Privacy Policy</a>.</p>
                 </>
               )}
               {modalContent === 'terms' && (

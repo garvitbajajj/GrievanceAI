@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — GrievanceAI</title>
+  <style>
+    :root { color-scheme: light dark; --fg: #1b1c22; --muted: #5a5d6b; --bg: #fafafc; --link: #283593; }
+    @media (prefers-color-scheme: dark) { :root { --fg: #e6e6ee; --muted: #a3a6b4; --bg: #121318; --link: #9fa8ff; } }
+    body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.65 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    main { max-width: 720px; margin: 0 auto; padding: 48px 16px 64px; }
+    h1 { margin: 0 0 4px; font-size: 1.9rem; }
+    h2 { margin: 32px 0 8px; font-size: 1.15rem; }
+    p, li { color: var(--fg); }
+    .muted { color: var(--muted); }
+    a { color: var(--link); }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Privacy Policy</h1>
+  <p class="muted">GrievanceAI · Last updated 25 September 2026</p>
+
+  <p>GrievanceAI is a student portfolio project that helps citizens describe grievances in Indian languages and find the right government portal. It is not a government service, and filing here does not submit a complaint to any authority.</p>
+
+  <h2>What we collect</h2>
+  <ul>
+    <li><strong>Account details:</strong> your name and email address. If you sign in with Google, we receive only your name, email and profile picture URL.</li>
+    <li><strong>Grievance content:</strong> the text you type, voice recordings, and images or PDFs you attach.</li>
+    <li><strong>Contact and location details you enter:</strong> name, phone number, state, district, pincode, address and landmark.</li>
+    <li><strong>Settings:</strong> preferred language and, if you enable it, a two-factor authentication factor.</li>
+  </ul>
+
+  <h2>How we use it</h2>
+  <ul>
+    <li>Your grievance text, recordings and attachments are sent to Google's Gemini API to transcribe, translate, summarise and categorise the complaint, and to suggest nearby offices.</li>
+    <li>Your email is used to sign you in and, if enabled, to send status and follow-up emails about your grievances.</li>
+    <li>Confirmed grievance text and categories may be kept to evaluate and improve classification accuracy.</li>
+  </ul>
+
+  <h2>Where it is stored</h2>
+  <p>Data is stored in Supabase (database, authentication and file storage). Attachments are kept in a private bucket and are only served through short-lived signed links. The website is hosted on Vercel. We do not sell your data or use it for advertising.</p>
+
+  <h2>Who can see it</h2>
+  <p>You can see your own grievances. Accounts with an admin or authority role can view and update all grievances in order to process them.</p>
+
+  <h2>Deleting your data</h2>
+  <p>You can discard a grievance before submitting it. To delete your account and all associated data, open an issue on the project's <a href="https://github.com/garvitbajajj/GrievanceAI/issues">GitHub repository</a> and it will be removed.</p>
+
+  <p class="muted"><a href="/">← Back to GrievanceAI</a></p>
+</main>
+</body>
+</html>
