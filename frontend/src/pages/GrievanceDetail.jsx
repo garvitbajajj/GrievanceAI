@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import DashboardLayout from '../components/DashboardLayout';
 import PopupModal from '../components/PopupModal';
 import api from '../utils/api';
-import { categoryLabel } from '../data/options';
+import { categoryLabel, DEPARTMENTS } from '../data/options';
 import './GrievanceDetail.css';
 
 export default function GrievanceDetail() {
@@ -22,6 +22,7 @@ export default function GrievanceDetail() {
   const [remark, setRemark]           = useState('');
   const [replyStatus, setReplyStatus] = useState('resolved');
   const [updating, setUpdating]       = useState(false);
+  const [assignee, setAssignee]       = useState('');
   const [sendingMail, setSendingMail] = useState(false);
 
   // Popup modal
@@ -101,6 +102,20 @@ export default function GrievanceDetail() {
       setRemark('');
     } catch (err) {
       showPopup('error', 'Update Failed', err.response?.data?.message || 'Could not update grievance status. Please try again.');
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const handleAssign = async () => {
+    setUpdating(true);
+    try {
+      await api.put(`/api/admin/grievance/${id}/assign`, { assigned_to: assignee });
+      showPopup('success', 'Grievance Assigned', `Assigned to ${assignee}.`);
+      setAssignee('');
+      fetchDetail();
+    } catch (err) {
+      showPopup('error', 'Assignment Failed', err.response?.data?.message || 'Could not assign this grievance.');
     } finally {
       setUpdating(false);
     }
@@ -231,6 +246,22 @@ export default function GrievanceDetail() {
                   <h2>Official Response</h2>
                 </div>
                 <p className="response-hint">Reply to the citizen and update the status. If you mark as Resolved, a confirmation email will be sent to the citizen in their native language.</p>
+
+                <div style={{ marginBottom: '16px' }}>
+                  <label className="input-label" style={{ display: 'block', marginBottom: '8px' }}>
+                    Assign to department
+                    {grievance.assigned_to && <span style={{ fontWeight: 400, color: 'var(--outline)' }}> · currently {grievance.assigned_to}</span>}
+                  </label>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <select className="input-field" value={assignee} onChange={e => setAssignee(e.target.value)}>
+                      <option value="">Select a department</option>
+                      {DEPARTMENTS.map(d => <option key={d} value={d}>{d}</option>)}
+                    </select>
+                    <button type="button" className="btn btn-outline" onClick={handleAssign} disabled={!assignee || updating}>
+                      Assign
+                    </button>
+                  </div>
+                </div>
 
                 <div style={{ marginBottom: '16px' }}>
                   <label className="input-label" style={{ display: 'block', marginBottom: '8px' }}>

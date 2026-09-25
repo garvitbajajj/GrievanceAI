@@ -61,3 +61,19 @@ export const LANGUAGES = [
   ['od-IN', 'Odia'],
   ['ur-IN', 'Urdu'],
 ];
+
+export const DEPARTMENTS = [
+  'Municipal Corporation',
+  'Water Supply & Sewerage Board',
+  'Electricity Distribution Company',
+  'Public Works Department (Roads)',
+  'Police / Cyber Cell',
+  'Health Department',
+  'Transport Department',
+  'Revenue Department',
+  'Food & Civil Supplies',
+  'Pollution Control Board',
+  'Education Department',
+  'Social Welfare Department',
+  'Other',
+];
