@@ -10,8 +10,9 @@
 import { encodeBase64 } from 'jsr:@std/encoding@1/base64';
 
 const API_KEY = Deno.env.get('GEMINI_API_KEY') ?? '';
-const MODELS = (Deno.env.get('GEMINI_MODELS') ?? 'gemini-2.5-flash,gemini-2.5-flash-lite,gemini-2.0-flash')
+let models = (Deno.env.get('GEMINI_MODELS') ?? 'gemini-3.8-flash,gemini-3.5-flash-lite')
   .split(',').map((m) => m.trim()).filter(Boolean);
+let discovered = false;
 
 export const CATEGORIES = [
   'cybercrime', 'telecom_fraud', 'human_rights', 'corruption',
@@ -26,37 +27,59 @@ export const CATEGORIES = [
 // deno-lint-ignore no-explicit-any
 type Part = Record<string, any>;
 
+// Google retires Gemini model names regularly. When every configured model 404s,
+// ask the API which flash models this key can use (newest first) and retry once.
+async function discoverModels() {
+  const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models?pageSize=200', {
+    headers: { 'x-goog-api-key': API_KEY },
+  });
+  // deno-lint-ignore no-explicit-any
+  const { models: list = [] } = await res.json() as { models?: any[] };
+  return list
+    .filter((m) => m.supportedGenerationMethods?.includes('generateContent') && /flash/.test(m.name) &&
+      !/image|tts|audio|live|exp/.test(m.name))
+    .map((m) => String(m.name).replace('models/', ''))
+    .sort().reverse();
+}
+
 async function generate(parts: Part[], schema: object, temperature = 0.2, system?: string) {
   if (!API_KEY) throw new Error('GEMINI_API_KEY is not set');
+  const body = JSON.stringify({
+    ...(system && { systemInstruction: { parts: [{ text: system }] } }),
+    contents: [{ role: 'user', parts }],
+    generationConfig: { responseMimeType: 'application/json', responseSchema: schema, temperature },
+  });
   let lastError = '';
-  for (const model of MODELS) {
-    try {
-      const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-        {
+  for (;;) {
+    let allNotFound = true;
+    for (const model of models) {
+      try {
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'x-goog-api-key': API_KEY },
-          body: JSON.stringify({
-            ...(system && { systemInstruction: { parts: [{ text: system }] } }),
-            contents: [{ role: 'user', parts }],
-            generationConfig: { responseMimeType: 'application/json', responseSchema: schema, temperature },
-          }),
+          body,
           signal: AbortSignal.timeout(45_000),
-        },
-      );
-      if (!res.ok) {
-        lastError = `${model}: ${res.status} ${(await res.text()).slice(0, 300)}`;
-        console.warn('Gemini failed, trying next model —', lastError);
-        continue;
+        });
+        if (!res.ok) {
+          if (res.status !== 404) allNotFound = false;
+          lastError = `${model}: ${res.status} ${(await res.text()).slice(0, 300)}`;
+          console.warn('Gemini failed, trying next model —', lastError);
+          continue;
+        }
+        const data = await res.json();
+        // deno-lint-ignore no-explicit-any
+        const text = (data.candidates?.[0]?.content?.parts ?? []).map((p: any) => p.text ?? '').join('');
+        return JSON.parse(text);
+      } catch (err) {
+        allNotFound = false;
+        lastError = `${model}: ${err instanceof Error ? err.message : err}`;
+        console.warn('Gemini error, trying next model —', lastError);
       }
-      const data = await res.json();
-      // deno-lint-ignore no-explicit-any
-      const text = (data.candidates?.[0]?.content?.parts ?? []).map((p: any) => p.text ?? '').join('');
-      return JSON.parse(text);
-    } catch (err) {
-      lastError = `${model}: ${err instanceof Error ? err.message : err}`;
-      console.warn('Gemini error, trying next model —', lastError);
     }
+    if (!allNotFound || discovered) break;
+    discovered = true;
+    models = await discoverModels();
+    console.warn('Configured Gemini models are retired; using discovered models:', models.join(', '));
   }
   throw new Error(`All Gemini models failed. Last error: ${lastError}`);
 }
