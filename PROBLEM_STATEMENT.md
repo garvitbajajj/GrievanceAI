@@ -1,4 +1,4 @@
-# Problem Statement: BhashaFlow
+# Problem Statement: GrievanceAI
 
 ## 1.1 Background and Context
 
@@ -20,31 +20,31 @@ Therefore, there is a pressing need for an inclusive, multilingual, AI-powered g
 
 ## 1.2 Identified Problem
 
-BhashaFlow addresses five distinct, interrelated challenges in the current grievance redressal ecosystem:
+GrievanceAI addresses five distinct, interrelated challenges in the current grievance redressal ecosystem:
 
 ### Challenge 1 — Language Barrier and Accessibility Exclusion
 
 Existing grievance portals are inaccessible to non-English-speaking and non-literate citizens. Most currently available complaint management systems are designed primarily for users who can read, write, and navigate digital platforms in English or Hindi. This creates a serious barrier for citizens who communicate in regional languages or have limited literacy levels. A large section of the rural and economically weaker population is therefore unable to effectively register complaints or understand the complaint submission process. The exclusion is not merely inconvenient — it is a systemic failure of digital governance to reach those who most need governmental support.
 
-BhashaFlow's solution: Support for multiple input modes in Indian languages — citizens can speak their complaint in their native language, and the system automatically translates and processes it through speech-to-text and translation services (Sarvam API).
+GrievanceAI's solution: Support for multiple input modes in Indian languages — citizens can speak their complaint in their native language, and the system automatically translates and processes it through Google Gemini's multimodal speech-to-text and translation.
 
 ### Challenge 2 — Absence of Intelligent Routing and Categorization
 
 Complaints are either manually categorized or placed in a single queue regardless of urgency. In many traditional systems, complaints are manually sorted by staff members without proper classification. As a result, urgent issues such as water shortages, electricity failures, road accidents, or sanitation hazards may receive the same priority as routine complaints. This leads to delays, inefficient handling, and poor resource allocation across departments.
 
-BhashaFlow's solution: AI-powered automatic classification using Google Gemini LLM to analyze complaint content, extract key information, assign urgency scores, and route to the correct government portal or department with structured metadata.
+GrievanceAI's solution: AI-powered automatic classification using Google Gemini LLM to analyze complaint content, extract key information, assign urgency scores, and route to the correct government portal or department with structured metadata.
 
 ### Challenge 3 — Opaque Resolution Process
 
 Citizens receive little to no feedback after submitting a complaint — the system functions as a black box. Once a complaint is submitted, many users do not receive regular updates regarding its status, progress, or expected resolution timeline. There is often no clear communication on whether the complaint has been assigned, reviewed, or resolved. This lack of transparency reduces public trust and discourages citizens from using grievance platforms in the future.
 
-BhashaFlow's solution: An AI verification step before final submission that shows citizens their complaint summary in their own language, allowing them to correct misunderstandings. A personalized citizen dashboard displays complaint history, real-time status updates, assigned portal information, and expected SLA timelines.
+GrievanceAI's solution: An AI verification step before final submission that shows citizens their complaint summary in their own language, allowing them to correct misunderstandings. A personalized citizen dashboard displays complaint history, real-time status updates, assigned portal information, and expected SLA timelines.
 
 ### Challenge 4 — Single-Modal Input Limitations
 
 Multi-modal input — including voice recording and images of handwritten complaints or photographic evidence — is unsupported in most public grievance systems. Most grievance portals only allow typed text submissions through forms, which excludes users who are not comfortable typing or do not possess advanced digital skills. Citizens may prefer speaking their complaint in their native language or uploading a handwritten application or supporting images, but such input methods are generally unavailable.
 
-BhashaFlow's solution: A unified, multi-modal complaint intake system supporting:
+GrievanceAI's solution: A unified, multi-modal complaint intake system supporting:
 - **Text input** in any Indian language
 - **Voice/audio input** with automatic speech-to-text conversion
 - **Image upload** with OCR for handwritten letters, supporting documentation, and photographic evidence
@@ -54,18 +54,18 @@ BhashaFlow's solution: A unified, multi-modal complaint intake system supporting
 
 Administrators lack analytical dashboards to prioritize critical complaints or track departmental performance. Without proper analytics, decision-making becomes reactive rather than proactive, reducing the government's ability to monitor service quality and improve grievance resolution systems systematically.
 
-BhashaFlow's solution: A secured admin dashboard with:
+GrievanceAI's solution: A secured admin dashboard with:
 - Real-time grievance filtering and search capabilities
 - AI-powered insights dashboard showing complaint trends, priority clusters, and urgent cases
 - Assignment and status update workflows
 - Performance metrics and departmental analytics
 - Follow-up email automation for resolution tracking
 
-## 1.3 Proposed Solution — BhashaFlow
+## 1.3 Proposed Solution — GrievanceAI
 
-**BhashaFlow: Multilingual GenAI for Citizen Social Grievances**
+**GrievanceAI: Multilingual GenAI for Citizen Social Grievances**
 
-BhashaFlow is a full-stack, AI-powered public grievance redressal web application that allows citizens to submit complaints in any Indian language using text, voice, or image (including handwritten letters and supporting documentation). The system employs Google's Gemini large language model and Sarvam's translation and speech services to automatically translate, summarize, categorize, and assign priority scores to each grievance before routing it to the correct government department or portal.
+GrievanceAI is a full-stack, AI-powered public grievance redressal web application that allows citizens to submit complaints in any Indian language using text, voice, or image (including handwritten letters and supporting documentation). The system employs Google's Gemini multimodal model to transcribe, read, and automatically translate, summarize, categorize, and assign priority scores to each grievance before routing it to the correct government department or portal.
 
 The citizen workflow is designed for maximum accessibility and transparency:
 1. **Describe** — Submit grievance via text, voice, or image in their preferred Indian language
@@ -89,7 +89,7 @@ The administrative workflow provides officials with:
 - **Multilingual support** across Indian languages (Tamil, Telugu, Bengali, Marathi, Gujarati, Punjabi, Kannada, Malayalam, Odia, Assamese, and others)
 - **Multi-modal input**: text, voice/audio, OCR from images, and supporting documentation
 - **AI-powered analysis** using Google Gemini for intelligent categorization and summarization
-- **Automatic translation** via Sarvam API between Indian languages and English
+- **Automatic translation** via Google Gemini between Indian languages and English
 - **Smart routing** to correct government departments and portals
 - **Priority scoring** for urgent civic issues
 - **Citizen authentication** via Google OAuth and email/password
@@ -104,34 +104,33 @@ The administrative workflow provides officials with:
 
 ## 1.5 Problem Scope and Boundaries
 
-BhashaFlow is scoped to municipal and civic grievances — issues handled by local government bodies, municipal corporations, and state departments. The system does not address:
+GrievanceAI is scoped to municipal and civic grievances — issues handled by local government bodies, municipal corporations, and state departments. The system does not address:
 - Judicial complaints or legal matters
 - Parliamentary petitions
 - Private-sector consumer disputes
 - Police complaints (criminal matters)
 
-BhashaFlow operates in an Indian governance context and currently supports department categories covering the most common civic complaint types including water supply, electricity, roads and infrastructure, sanitation, waste management, public transportation, healthcare, law and order, and welfare services.
+GrievanceAI operates in an Indian governance context and currently supports department categories covering the most common civic complaint types including water supply, electricity, roads and infrastructure, sanitation, waste management, public transportation, healthcare, law and order, and welfare services.
 
 ### Technical Boundaries:
-- Requires an active internet connection for AI-powered analysis (Google Gemini and Sarvam APIs)
+- Requires an active internet connection for AI-powered analysis (Google Gemini API)
 - Designed for web browser access via React SPA
 - Voice input supported on Chromium-based browsers (Chrome, Edge) via Web Speech API
-- OCR functionality powered by EasyOCR with support for Indian language character recognition
-- Multi-language translation and speech services provided by Sarvam API
-- Backend deployed on cloud services (Render) with MongoDB Atlas for data persistence
+- OCR, speech-to-text and translation handled by Google Gemini's multimodal model
+- Backend deployed as Supabase Edge Functions with Supabase Postgres and Storage for data persistence
 - Production frontend hosted on Vercel for global accessibility and performance
 
 ### Data Privacy and Security:
 - All personal information (email, phone number, identity documents) encrypted in transit and at rest
 - Google OAuth integration for secure authentication without storing passwords
-- JWT-based session management for citizen and admin access
+- Supabase Auth (JWT) session management, with optional TOTP two-factor authentication
 - Compliant with Data Protection principles for handling citizen grievances
 - Secure API communication between frontend, backend, and AI services
 - Admin access restricted to authorized government users only
 
 ## 1.6 Expected Outcomes and Impact
 
-Upon successful implementation and deployment, BhashaFlow is expected to:
+Upon successful implementation and deployment, GrievanceAI is expected to:
 
 1. **Increase citizen participation** by removing language and literacy barriers, enabling millions of non-English speakers to file complaints through voice and image inputs
 2. **Reduce complaint resolution time** through intelligent routing, eliminating manual categorization delays
@@ -144,5 +143,5 @@ Upon successful implementation and deployment, BhashaFlow is expected to:
 
 ---
 
-**Document Status:** Problem Statement for BhashaFlow - NIIT University B.Tech CSE Capstone Project  
+**Document Status:** Problem Statement for GrievanceAI - NIIT University B.Tech CSE Capstone Project  
 **Last Updated:** April 2026
