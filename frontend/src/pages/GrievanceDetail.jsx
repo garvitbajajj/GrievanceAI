@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import DashboardLayout from '../components/DashboardLayout';
 import PopupModal from '../components/PopupModal';
 import api from '../utils/api';
+import { categoryLabel } from '../data/options';
 import './GrievanceDetail.css';
 
 export default function GrievanceDetail() {
@@ -268,7 +269,7 @@ export default function GrievanceDetail() {
                 <h2>AI Analysis</h2>
               </div>
               <p className="ai-insight-text">
-                <strong>Category:</strong> {grievance.category || 'General'} &nbsp;|&nbsp;
+                <strong>Category:</strong> {categoryLabel(grievance.category)} &nbsp;|&nbsp;
                 <strong>Confidence:</strong> {aiAnalysis?.confidence_score
                   ? `${Math.round(aiAnalysis.confidence_score * 100)}%`
                   : 'N/A'

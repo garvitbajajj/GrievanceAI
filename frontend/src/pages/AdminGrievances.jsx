@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import DashboardLayout from '../components/DashboardLayout';
 import api from '../utils/api';
+import AdminFilters from '../components/AdminFilters';
+import { categoryLabel } from '../data/options';
 import './AdminDashboard.css'; // Reuse styles
 
 const timeAgo = (date) => {
@@ -14,8 +16,7 @@ const timeAgo = (date) => {
 export default function AdminGrievances() {
   const [grievances, setGrievances] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filterStatus, setFilterStatus] = useState('');
-  const [filterCategory, setFilterCategory] = useState('');
+  const [filters, setFilters] = useState({ category: '', status: '', language: '' });
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -24,12 +25,7 @@ export default function AdminGrievances() {
     const fetch = async () => {
       setLoading(true);
       try {
-        const params = new URLSearchParams();
-        if (filterStatus) params.append('status', filterStatus);
-        if (filterCategory) params.append('category', filterCategory);
-        params.append('page', page);
-        params.append('limit', 20);
-        const res = await api.get(`/api/admin/grievances?${params}`);
+        const res = await api.get('/api/admin/grievances', { params: { ...filters, page, limit: 20 } });
         setGrievances(res.data.grievances || []);
         setTotalPages(res.data.pagination?.total_pages || 1);
       } catch (err) {
@@ -39,7 +35,7 @@ export default function AdminGrievances() {
       }
     };
     fetch();
-  }, [filterStatus, filterCategory, page, refreshKey]);
+  }, [filters, page, refreshKey]);
 
   return (
     <DashboardLayout isAdmin>
@@ -61,26 +57,7 @@ export default function AdminGrievances() {
             <span className="material-symbols-outlined" style={{ color: 'var(--primary-container)' }}>tune</span>
             Filters
           </div>
-          <div className="filters-grid">
-            <div className="field-group">
-              <label className="input-label">Category</label>
-              <select className="input-field" value={filterCategory} onChange={(e) => { setFilterCategory(e.target.value); setPage(1); setRefreshKey(k => k + 1); }}>
-                <option value="">All Categories</option>
-                {['water','roads','electricity','sanitation','education','healthcare','other'].map(c => (
-                  <option key={c} value={c} style={{ textTransform: 'capitalize' }}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>
-                ))}
-              </select>
-            </div>
-            <div className="field-group">
-              <label className="input-label">Status</label>
-              <select className="input-field" value={filterStatus} onChange={(e) => { setFilterStatus(e.target.value); setPage(1); setRefreshKey(k => k + 1); }}>
-                <option value="">All Statuses</option>
-                {['pending','processing','open','in_progress','resolved','closed'].map(s => (
-                  <option key={s} value={s}>{s.replace('_',' ').replace(/\b\w/g, c => c.toUpperCase())}</option>
-                ))}
-              </select>
-            </div>
-          </div>
+          <AdminFilters filters={filters} onChange={(f) => { setFilters(f); setPage(1); setRefreshKey(k => k + 1); }} />
         </div>
 
         <motion.div
@@ -126,7 +103,7 @@ export default function AdminGrievances() {
                 <span className="urgent-title" title={g.title || ''}>
                   {g.title || g.original_text?.substring(0, 55) || 'No title'}
                 </span>
-                <span className="urgent-dept">{g.category || 'General'}</span>
+                <span className="urgent-dept">{categoryLabel(g.category)}</span>
                 <span className={`chip ${(g.status === 'resolved' || g.status === 'closed') ? 'chip-success' : 'chip-warning'}`} style={{ fontSize: 10 }}>
                   {(g.status || 'PENDING').toUpperCase()}
                 </span>

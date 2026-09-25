@@ -3,6 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import DashboardLayout from '../components/DashboardLayout';
 import api from '../utils/api';
+import AdminFilters from '../components/AdminFilters';
+import { categoryLabel } from '../data/options';
 import './AdminDashboard.css';
 
 const timeAgo = (date) => {
@@ -65,8 +67,7 @@ export default function AdminDashboard() {
   const [grievances, setGrievances] = useState([]);
   const [loadingStats, setLoadingStats] = useState(true);
   const [loadingList, setLoadingList]   = useState(true);
-  const [filterStatus,   setFilterStatus]   = useState('');
-  const [filterCategory, setFilterCategory] = useState('');
+  const [filters, setFilters] = useState({ category: '', status: '', language: '' });
   const [page, setPage]         = useState(1);
   const [refreshKey, setRefreshKey] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
@@ -87,13 +88,13 @@ export default function AdminDashboard() {
     const fetch = async () => {
       setLoadingList(true);
       try {
-        const res = await api.get('/api/admin/grievances', { params: { status: filterStatus, category: filterCategory, page } });
+        const res = await api.get('/api/admin/grievances', { params: { ...filters, page } });
         setGrievances(res.data.grievances || []);
         setTotalPages(Math.max(1, res.data.pagination?.total_pages || 1));
       } catch { /* ignore */ } finally { setLoadingList(false); }
     };
     fetch();
-  }, [filterStatus, filterCategory, page, refreshKey]);
+  }, [filters, page, refreshKey]);
 
   const categoriesList = Object.entries(stats.by_category || {}).map(([name, count], i) => ({
     name, count,
@@ -153,7 +154,7 @@ export default function AdminDashboard() {
                   <div className="category-info">
                     <div className="category-dot" style={{ background: c.color }} />
                     <span className="category-name" style={{ textTransform: 'capitalize' }}>
-                      {c.name} ({c.count})
+                      {categoryLabel(c.name)} ({c.count})
                     </span>
                   </div>
                   <div className="category-bar-wrap">
@@ -219,7 +220,7 @@ export default function AdminDashboard() {
                   <span className="urgent-title" title={g.title || ''}>
                     {g.title || g.original_text?.substring(0, 55) || 'No title'}
                   </span>
-                  <span className="urgent-dept">{g.category || 'General'}</span>
+                  <span className="urgent-dept">{categoryLabel(g.category)}</span>
                   <span className={`chip ${(g.status === 'resolved' || g.status === 'closed') ? 'chip-success' : 'chip-warning'}`} style={{ fontSize: 10 }}>
                     {(g.status || 'PENDING').toUpperCase()}
                   </span>
@@ -248,26 +249,7 @@ export default function AdminDashboard() {
             <span className="material-symbols-outlined" style={{ color: 'var(--primary-container)' }}>tune</span>
             Filters
           </div>
-          <div className="filters-grid">
-            <div className="field-group">
-              <label className="input-label">Category</label>
-              <select className="input-field" value={filterCategory} onChange={(e) => { setFilterCategory(e.target.value); setPage(1); setRefreshKey(k => k + 1); }}>
-                <option value="">All Categories</option>
-                {['water','roads','electricity','sanitation','education','healthcare','other'].map(c => (
-                  <option key={c} value={c} style={{ textTransform: 'capitalize' }}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>
-                ))}
-              </select>
-            </div>
-            <div className="field-group">
-              <label className="input-label">Status</label>
-              <select className="input-field" value={filterStatus} onChange={(e) => { setFilterStatus(e.target.value); setPage(1); setRefreshKey(k => k + 1); }}>
-                <option value="">All Statuses</option>
-                {['pending','processing','open','in_progress','resolved','closed'].map(s => (
-                  <option key={s} value={s}>{s.replace('_',' ').replace(/\b\w/g, c => c.toUpperCase())}</option>
-                ))}
-              </select>
-            </div>
-          </div>
+          <AdminFilters filters={filters} onChange={(f) => { setFilters(f); setPage(1); setRefreshKey(k => k + 1); }} />
         </motion.div>
 
         <footer className="page-footer">

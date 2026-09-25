@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import DashboardLayout from '../components/DashboardLayout';
 import api from '../utils/api';
+import { categoryLabel } from '../data/options';
 import './Dashboard.css';
 
 const timeAgo = (date) => {
@@ -192,7 +193,7 @@ export default function Dashboard() {
                       <div className="grievance-card-bottom">
                         <span className="grievance-dept" style={{ textTransform: 'capitalize' }}>
                           <span className="material-symbols-outlined">account_balance</span>
-                          {g.category || 'General'}
+                          {categoryLabel(g.category)}
                         </span>
                         <span className="grievance-date">{timeAgo(g.submitted_at)}</span>
                       </div>
