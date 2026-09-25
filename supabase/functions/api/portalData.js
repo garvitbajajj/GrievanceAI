@@ -12,7 +12,7 @@ export const NATIONAL_PORTALS = [
 
 export const STATE_PORTALS = {
   Delhi: { portal_name: 'Delhi PGMS', portal_url: 'https://pgms.delhi.gov.in', helpline: '155345' },
-  UP: { portal_name: 'Uttar Pradesh Jansunwai', portal_url: 'https://jansunwai.up.nic.in', helpline: '1076' },
+  'Uttar Pradesh': { portal_name: 'Uttar Pradesh Jansunwai', portal_url: 'https://jansunwai.up.nic.in', helpline: '1076' },
   Maharashtra: { portal_name: 'Maharashtra Aaple Sarkar', portal_url: 'https://aaplesarkar.mahaonline.gov.in', helpline: '18001208040' },
   'Andhra Pradesh': { portal_name: 'Andhra Pradesh PGRS', portal_url: 'https://gramasachivalayam.ap.gov.in', helpline: '1902' },
 };

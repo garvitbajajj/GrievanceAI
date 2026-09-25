@@ -43,7 +43,7 @@ async function _send(options) {
 export async function sendFollowUpEmail(to, grievanceId, category, title) {
   const frontendBase = FRONTEND_URL;
   const resolvedLink = `${frontendBase}/grievance/${grievanceId}?feedback=resolved`;
-  const pendingLink = `${frontendBase}/grievance/${grievanceId}?feedback=pending`;
+  const pendingLink = `${frontendBase}/grievance/${grievanceId}?feedback=not_resolved`;
 
   const mailOptions = {
     from: `"GrievanceAI" <${GMAIL_USER}>`,
