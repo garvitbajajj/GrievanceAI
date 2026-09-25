@@ -8,7 +8,7 @@ import nodemailer from 'npm:nodemailer@6.9.16';
  */
 const GMAIL_USER = Deno.env.get('GMAIL_USER');
 const GMAIL_PASS = Deno.env.get('GMAIL_PASS');
-const FRONTEND_URL = Deno.env.get('FRONTEND_URL') || 'http://localhost:3000';
+const FRONTEND_URL = Deno.env.get('FRONTEND_URL') || 'https://grievance-ai-one.vercel.app';
 const MAIL_ENABLED = !!(GMAIL_USER && GMAIL_PASS);
 
 if (!MAIL_ENABLED) {

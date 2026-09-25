@@ -1,5 +1,7 @@
 # GrievanceAI
 
+**Live demo:** https://grievance-ai-one.vercel.app
+
 **Multilingual GenAI for citizen grievances.** Citizens describe a problem in any Indian language, by typing, speaking, or uploading a photo or PDF. GrievanceAI transcribes and translates it, classifies it into the right civic category, and routes the citizen to the correct government portal, with nearby offices on a map and step-by-step next actions.
 
 ## Features
@@ -81,7 +83,7 @@ Set these in **Supabase dashboard → Edge Functions → Secrets** (see `.env.ex
 | Secret | Required | Purpose |
 |---|---|---|
 | `GEMINI_API_KEY` | yes | Gemini API key |
-| `GEMINI_MODELS` | no | Comma-separated model fallback order |
+| `GEMINI_MODELS` | no | Comma-separated model fallback order (retired models are auto-replaced) |
 | `GMAIL_USER`, `GMAIL_PASS` | no | Gmail address + App Password for emails (skipped when unset) |
 | `FRONTEND_URL` | no | Base URL used in email links |
 
