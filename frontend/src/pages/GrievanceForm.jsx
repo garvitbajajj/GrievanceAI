@@ -14,17 +14,12 @@ import DashboardLayout from '../components/DashboardLayout';
 import StepIndicator from '../components/StepIndicator';
 import NavigationGuard from '../components/NavigationGuard';
 import api from '../utils/api';
+import DISTRICTS from '../data/districts.json';
 import './GrievanceForm.css';
 
-const INDIAN_STATES = [
-  'Andhra Pradesh','Arunachal Pradesh','Assam','Bihar','Chhattisgarh',
-  'Goa','Gujarat','Haryana','Himachal Pradesh','Jharkhand','Karnataka',
-  'Kerala','Madhya Pradesh','Maharashtra','Manipur','Meghalaya','Mizoram',
-  'Nagaland','Odisha','Punjab','Rajasthan','Sikkim','Tamil Nadu','Telangana',
-  'Tripura','Uttar Pradesh','Uttarakhand','West Bengal',
-  'Andaman & Nicobar Islands','Chandigarh','Dadra & Nagar Haveli and Daman & Diu',
-  'Delhi','Jammu & Kashmir','Ladakh','Lakshadweep','Puducherry',
-];
+// ponytail: district list is a ~2018 snapshot plus manual fixes; the "Other" option covers newer districts.
+const INDIAN_STATES = Object.keys(DISTRICTS);
+const OTHER_DISTRICT = '__other__';
 
 const pageVariants = {
   initial: { opacity: 0, y: 24 },
@@ -67,8 +62,13 @@ export default function GrievanceForm() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [loadingMsg, setLoadingMsg]   = useState('');
+  const [districtOther, setDistrictOther] = useState(false);
 
   const set = (field) => (e) => setForm((prev) => ({ ...prev, [field]: e.target.value }));
+
+  const districtList   = DISTRICTS[form.state] || [];
+  // Free-text district when the user picked "Other" or a saved value isn't in the list.
+  const customDistrict = districtOther || (!!form.district && !districtList.includes(form.district));
 
   // ── Auto-save form details to backend (debounced) ──────────────
   const saveTimerRef = useRef(null);
@@ -141,6 +141,10 @@ export default function GrievanceForm() {
       setSubmitError('Please fill in State, District, Pincode and Address.');
       return;
     }
+    if (!/^\d{6}$/.test(form.pincode.trim())) {
+      setSubmitError('Pincode must be 6 digits.');
+      return;
+    }
 
     // Navigate to review page — no API call yet
     navigate(`/review/${id}`, {
@@ -190,7 +194,7 @@ export default function GrievanceForm() {
     { label: 'Your Full Name',      field: 'user_name',  type: 'text', placeholder: 'Rajesh Kumar',   half: true,  custom: 0 },
     { label: 'Phone Number',        field: 'user_phone', type: 'tel',  placeholder: '+91 98XXXXXXXX', half: true,  custom: 1 },
     { label: 'District',            field: 'district',   type: 'text', placeholder: 'e.g. Gurugram',  half: true,  custom: 3 },
-    { label: 'Pincode',             field: 'pincode',    type: 'text', placeholder: '122001',         half: true,  custom: 4 },
+    { label: 'Pincode',             field: 'pincode',    type: 'text', placeholder: '122001',         half: true,  custom: 4, inputMode: 'numeric', maxLength: 6 },
     { label: 'Landmark (optional)', field: 'landmark',   type: 'text', placeholder: 'Near city hall', half: false, custom: 6 },
   ];
 
@@ -229,7 +233,12 @@ export default function GrievanceForm() {
               {/* State dropdown */}
               <motion.div className="field-group" custom={2} variants={fieldVariants} initial="initial" animate="animate">
                 <label className="input-label">State / Union Territory</label>
-                <select className="input-field" value={form.state} onChange={set('state')} required>
+                <select
+                  className="input-field"
+                  value={form.state}
+                  onChange={(e) => { setForm((prev) => ({ ...prev, state: e.target.value, district: '' })); setDistrictOther(false); }}
+                  required
+                >
                   <option value="">Select your state</option>
                   {INDIAN_STATES.map((s) => <option key={s} value={s}>{s}</option>)}
                 </select>
@@ -258,6 +267,24 @@ export default function GrievanceForm() {
                         }}
                         placeholder="+91 98XXXXXXXX"
                       />
+                    ) : f.field === 'district' && !customDistrict ? (
+                      <select
+                        className="input-field"
+                        value={form.district}
+                        disabled={!form.state}
+                        onChange={(e) => {
+                          if (e.target.value === OTHER_DISTRICT) {
+                            setDistrictOther(true);
+                            setForm((prev) => ({ ...prev, district: '' }));
+                          } else {
+                            set('district')(e);
+                          }
+                        }}
+                      >
+                        <option value="">{form.state ? 'Select your district' : 'Select a state first'}</option>
+                        {districtList.map((d) => <option key={d} value={d}>{d}</option>)}
+                        <option value={OTHER_DISTRICT}>Other (type it)</option>
+                      </select>
                     ) : (
                       <input
                         type={f.type}
@@ -265,6 +292,8 @@ export default function GrievanceForm() {
                         value={form[f.field]}
                         onChange={set(f.field)}
                         placeholder={f.placeholder}
+                        inputMode={f.inputMode}
+                        maxLength={f.maxLength}
                       />
                     )}
                   </motion.div>
