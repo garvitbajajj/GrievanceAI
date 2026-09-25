@@ -1,26 +1,32 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLocation, useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import DashboardLayout from '../components/DashboardLayout';
 import { useGrievanceFlow } from '../context/GrievanceFlowContext';
 import api from '../utils/api';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import jsPDF from 'jspdf';
-import PopupModal from '../components/PopupModal';
 import './AIAnalysis.css';
 
-// Fix Leaflet's default icon path issues in React
-import icon from 'leaflet/dist/images/marker-icon.png';
-import iconShadow from 'leaflet/dist/images/marker-shadow.png';
-let DefaultIcon = L.icon({
-    iconUrl: icon,
-    shadowUrl: iconShadow,
-    iconSize: [25, 41],
-    iconAnchor: [12, 41]
+// Numbered map pins that match the numbers in the office list.
+const officePin = (n, active) => L.divIcon({
+  className: '',
+  html: `<div class="office-pin${active ? ' active' : ''}">${n}</div>`,
+  iconSize: [28, 28],
+  iconAnchor: [14, 14],
+  popupAnchor: [0, -14],
 });
-L.Marker.prototype.options.icon = DefaultIcon;
+
+// Flies the map to the office picked in the list.
+function FocusOffice({ office }) {
+  const map = useMap();
+  useEffect(() => {
+    if (office) map.flyTo([office.lat, office.lng], Math.max(map.getZoom(), 14), { duration: 0.6 });
+  }, [office, map]);
+  return null;
+}
 
 const sectionVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -44,6 +50,8 @@ export default function AIAnalysis() {
   const [isTranslating, setIsTranslating] = useState(false);
   const [translated, setTranslated]     = useState(null);
   const [isNative, setIsNative]           = useState(false);
+  const [activeOffice, setActiveOffice]   = useState(null);
+  const markerRefs = useRef([]);
 
   useEffect(() => {
     if (location.state) return;
@@ -191,7 +199,7 @@ export default function AIAnalysis() {
         ? `<div style="margin-bottom:20px;">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
               <div style="width:4px;height:20px;background:#1a237e;border-radius:2px;"></div>
-              <div style="color:#1a237e;font-size:14px;font-weight:800;">${isNonEnglish && nativeData ? 'Next Steps / अगले कदम' : 'Next Steps'}</div>
+              <div style="color:#1a237e;font-size:14px;font-weight:800;">Next Steps</div>
             </div>
             <ol style="font-size:13px;line-height:1.8;color:#323246;padding-left:30px;margin:0;">
               ${reportData.steps.map(s => `<li style="margin-bottom:4px;">${s}</li>`).join('')}
@@ -202,7 +210,7 @@ export default function AIAnalysis() {
         ? `<div style="margin-bottom:20px;">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
               <div style="width:4px;height:20px;background:#1a237e;border-radius:2px;"></div>
-              <div style="color:#1a237e;font-size:14px;font-weight:800;">${isNonEnglish && nativeData ? 'Nearby Offices / नजदीकी कार्यालय' : 'Nearby Offices'}</div>
+              <div style="color:#1a237e;font-size:14px;font-weight:800;">Nearby Offices</div>
             </div>
             <ul style="font-size:13px;line-height:1.8;color:#323246;padding-left:30px;margin:0;">
               ${reportData.offices.map(o => `<li>${String(o)}</li>`).join('')}
@@ -213,7 +221,7 @@ export default function AIAnalysis() {
         ? `<div style="margin-bottom:20px;">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
               <div style="width:4px;height:20px;background:#1a237e;border-radius:2px;"></div>
-              <div style="color:#1a237e;font-size:14px;font-weight:800;">${isNonEnglish && nativeData ? 'Government Portals / सरकारी पोर्टल' : 'Relevant Government Portals'}</div>
+              <div style="color:#1a237e;font-size:14px;font-weight:800;">Relevant Government Portals</div>
             </div>
             ${portalsArray.map(p => `
               <div style="padding-left:12px;margin-bottom:8px;">
@@ -247,7 +255,7 @@ export default function AIAnalysis() {
           <div style="margin-bottom:20px;">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
               <div style="width:4px;height:20px;background:#1a237e;border-radius:2px;"></div>
-              <div style="color:#1a237e;font-size:14px;font-weight:800;">${isNonEnglish && nativeData ? 'AI Analysis / AI विश्लेषण' : 'AI Summary'}</div>
+              <div style="color:#1a237e;font-size:14px;font-weight:800;">AI Summary</div>
             </div>
             <div style="font-size:13px;line-height:1.8;color:#323246;padding-left:12px;">${reportData.summary || ''}</div>
           </div>
@@ -305,28 +313,36 @@ export default function AIAnalysis() {
     if (Array.isArray(portal_links)) return portal_links.map(p => ({
       name: p.portal_name || p.name,
       url:  p.portal_url  || p.url,
+      helpline: p.helpline,
       desc: p.helpline ? `Helpline: ${p.helpline}` : (p.desc || ''),
     }));
-    return [{ name: portal_links.portal_name, url: portal_links.portal_url, desc: portal_links.helpline ? `Helpline: ${portal_links.helpline}` : '' }];
+    return [{ name: portal_links.portal_name, url: portal_links.portal_url, helpline: portal_links.helpline, desc: portal_links.helpline ? `Helpline: ${portal_links.helpline}` : '' }];
   })();
+  const helplinePortal = portalsArray.find(p => p.helpline);
+
+  // Offices with usable coordinates, keeping their position in the list for numbering.
+  const mappedOffices = nearby_offices
+    .map((o, idx) => ({ idx, lat: parseFloat(o.lat), lng: parseFloat(o.lng) }))
+    .filter(o => Number.isFinite(o.lat) && Number.isFinite(o.lng));
 
   const mapBounds = (() => {
-    if (!nearby_offices || nearby_offices.length === 0) return null;
-    const validOffices = nearby_offices.filter(o => o.lat != null && o.lng != null);
-    if (validOffices.length === 0) return null;
-    if (validOffices.length === 1) {
-      // If only one office, create a tiny bounding box around it so the map doesn't zoom in too much
-      const lat = parseFloat(validOffices[0].lat);
-      const lng = parseFloat(validOffices[0].lng);
-      return [ [lat - 0.01, lng - 0.01], [lat + 0.01, lng + 0.01] ];
-    }
-    const lats = validOffices.map(o => parseFloat(o.lat));
-    const lngs = validOffices.map(o => parseFloat(o.lng));
+    if (mappedOffices.length === 0) return null;
+    const lats = mappedOffices.map(o => o.lat);
+    const lngs = mappedOffices.map(o => o.lng);
+    // Pad a little so a single office doesn't zoom all the way in.
     return [
-      [Math.min(...lats), Math.min(...lngs)],
-      [Math.max(...lats), Math.max(...lngs)],
+      [Math.min(...lats) - 0.01, Math.min(...lngs) - 0.01],
+      [Math.max(...lats) + 0.01, Math.max(...lngs) + 0.01],
     ];
   })();
+
+  const officeLabel = (idx) =>
+    (isNative && translated ? displayData.offices[idx] : null) || nearby_offices[idx]?.name || String(nearby_offices[idx]);
+
+  const focusOffice = (idx) => {
+    setActiveOffice(idx);
+    markerRefs.current[idx]?.openPopup();
+  };
 
   return (
     <DashboardLayout>
@@ -361,8 +377,72 @@ export default function AIAnalysis() {
             transition={{ delay: 0.2, duration: 0.4 }}
           >
             <span className="material-symbols-outlined quote-icon">format_quote</span>
-            <p><strong>{isNative ? 'एआई सारांश' : 'AI Summary'}: </strong>{displayData.summary}</p>
+            <p><strong>AI Summary: </strong>{displayData.summary}</p>
           </motion.div>
+
+        {/* Nearby offices: list on the left, map on the right */}
+        <motion.section className="ai-section" custom={0} variants={sectionVariants} initial="hidden" animate="show">
+          <h2>
+            <span className="material-symbols-outlined" style={{ color: 'var(--primary-container)' }}>location_on</span>
+            Nearby Offices
+          </h2>
+          {nearby_offices.length > 0 ? (
+            <div className="office-map">
+              <ol className="office-list">
+                {nearby_offices.map((office, idx) => {
+                  const mapped = mappedOffices.find(o => o.idx === idx);
+                  return (
+                    <li key={idx} className={activeOffice === idx ? 'active' : ''}>
+                      <button type="button" className="office-item" onClick={() => focusOffice(idx)} disabled={!mapped}>
+                        <span className="office-num">{idx + 1}</span>
+                        <span className="office-name">{officeLabel(idx)}</span>
+                      </button>
+                      {mapped && (
+                        <a
+                          href={`https://www.google.com/maps/search/?api=1&query=${mapped.lat},${mapped.lng}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="office-directions"
+                        >
+                          Directions →
+                        </a>
+                      )}
+                    </li>
+                  );
+                })}
+              </ol>
+              <div className="office-map-view">
+                {mapBounds ? (
+                  <MapContainer bounds={mapBounds} scrollWheelZoom={false} style={{ height: '100%', width: '100%', zIndex: 0 }}>
+                    <TileLayer
+                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    />
+                    {mappedOffices.map(o => (
+                      <Marker
+                        key={o.idx}
+                        position={[o.lat, o.lng]}
+                        icon={officePin(o.idx + 1, activeOffice === o.idx)}
+                        ref={el => { markerRefs.current[o.idx] = el; }}
+                        eventHandlers={{ click: () => setActiveOffice(o.idx) }}
+                      >
+                        <Popup>{officeLabel(o.idx)}</Popup>
+                      </Marker>
+                    ))}
+                    <FocusOffice office={mappedOffices.find(o => o.idx === activeOffice)} />
+                  </MapContainer>
+                ) : (
+                  <div className="map-placeholder">
+                    <span className="material-symbols-outlined">location_off</span>
+                    <span>Map locations unavailable for these offices</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            <p style={{ fontSize: 13, color: 'var(--outline)' }}>No nearby offices found for your district.</p>
+          )}
+        </motion.section>
 
         <div className="ai-grid">
           <div className="ai-main">
@@ -510,73 +590,19 @@ export default function AIAnalysis() {
           {/* Aside */}
           <aside className="ai-aside">
 
-            {/* Nearby Offices */}
-            <motion.div className="ai-aside-card" custom={0} variants={sectionVariants} initial="hidden" animate="show">
-              <h3>
-                <span className="material-symbols-outlined" style={{ color: 'var(--primary-container)' }}>business</span>
-                Nearby Offices
-              </h3>
-              {nearby_offices.length > 0 ? nearby_offices.map((office, idx) => (
-                <div key={idx} className="contact-item">
-                  <span className="contact-label">{isNative && translated ? displayData.offices[idx] : (office.name || office)}</span>
-                  {office.lat && (
-                    <a
-                      href={`https://www.google.com/maps/search/?api=1&query=${office.lat},${office.lng}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="contact-value"
-                    >
-                      View on Maps →
-                    </a>
-                  )}
-                </div>
-              )) : (
-                <p style={{ fontSize: 13, color: 'var(--outline)' }}>No nearby offices found for your district.</p>
-              )}
-            </motion.div>
-
             {/* Helpline */}
-            {portal_links?.helpline && (
+            {helplinePortal && (
               <motion.div className="ai-aside-card" custom={1} variants={sectionVariants} initial="hidden" animate="show">
                 <h3>
                   <span className="material-symbols-outlined" style={{ color: 'var(--saffron)' }}>call</span>
                   Helpline
                 </h3>
-                <a href={`tel:${portal_links.helpline}`} className="contact-value" style={{ fontSize: 20, fontWeight: 800 }}>
-                  {portal_links.helpline}
+                <a href={`tel:${helplinePortal.helpline.replace(/\s/g, '')}`} className="contact-value" style={{ fontSize: 20, fontWeight: 800 }}>
+                  {helplinePortal.helpline}
                 </a>
-                <p style={{ fontSize: 12, color: 'var(--outline)', marginTop: 4 }}>{portal_links.portal_name}</p>
+                <p style={{ fontSize: 12, color: 'var(--outline)', marginTop: 4 }}>{helplinePortal.name}</p>
               </motion.div>
             )}
-
-            {/* Map */}
-            <motion.div className="ai-aside-card" custom={2} variants={sectionVariants} initial="hidden" animate="show">
-              <h3>
-                <span className="material-symbols-outlined" style={{ color: 'var(--emerald)' }}>map</span>
-                Coverage Map
-              </h3>
-              {mapBounds ? (
-                <div style={{ height: '300px', width: '100%', borderRadius: '12px', overflow: 'hidden', marginTop: '12px' }}>
-                  <MapContainer bounds={mapBounds} scrollWheelZoom={true} style={{ height: '100%', width: '100%', zIndex: 0 }}>
-                    <TileLayer
-                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    />
-                    {nearby_offices.filter(o => o.lat != null && o.lng != null).map((office, idx) => (
-                      <Marker key={idx} position={[parseFloat(office.lat), parseFloat(office.lng)]}>
-                        <Popup>{office.name}</Popup>
-                      </Marker>
-                    ))}
-                  </MapContainer>
-                </div>
-              ) : (
-                <div className="map-placeholder">
-                  <span className="material-symbols-outlined">location_on</span>
-                  <span>Interactive Map Available After Location Set</span>
-                  <span style={{ fontSize: 11, background: 'var(--surface-container-highest)', padding: '2px 8px', borderRadius: 4 }}>Region coverage</span>
-                </div>
-              )}
-            </motion.div>
 
             {/* Eco badge */}
             <motion.div className="ai-aside-card" custom={3} variants={sectionVariants} initial="hidden" animate="show">

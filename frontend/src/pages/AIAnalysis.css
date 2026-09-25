@@ -414,3 +414,101 @@
   .ai-grid    { grid-template-columns: 1fr; }
   .class-grid { grid-template-columns: 1fr; }
 }
+/* ── Nearby offices: list beside the map ─────────────────── */
+.office-map {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) 2fr;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.office-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.office-list li {
+  border: 1px solid var(--outline-variant);
+  border-radius: 12px;
+  padding: 10px 12px;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.office-list li.active {
+  border-color: var(--primary-container);
+  background: var(--surface-container-low);
+}
+
+.office-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.office-item:disabled { cursor: default; }
+.office-item:focus-visible { outline: 2px solid var(--primary-container); outline-offset: 4px; border-radius: 6px; }
+
+.office-num,
+.office-pin {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--primary-container);
+  color: #fff;
+  font-weight: 800;
+  font-size: 12px;
+}
+
+.office-num { width: 24px; height: 24px; }
+.office-list li.active .office-num { background: var(--saffron); }
+
+.office-name { font-size: 13px; line-height: 1.45; color: var(--on-surface); }
+
+.office-directions {
+  display: inline-block;
+  margin: 6px 0 0 34px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary-container);
+  text-decoration: none;
+}
+
+.office-directions:hover { text-decoration: underline; }
+
+.office-map-view {
+  height: 360px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.office-map-view .map-placeholder { height: 100%; }
+
+.office-pin {
+  width: 28px;
+  height: 28px;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  transition: transform 0.15s;
+}
+
+.office-pin.active { background: var(--saffron); transform: scale(1.15); }
+
+@media (max-width: 700px) {
+  .office-map { grid-template-columns: 1fr; }
+  .office-map-view { height: 280px; order: -1; }
+}
