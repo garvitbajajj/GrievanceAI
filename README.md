@@ -1,244 +1,120 @@
-# BhashaFlow
+# GrievanceAI
 
-**Multilingual GenAI for Citizen Social Grievances**  
-NIIT University B.Tech CSE Capstone Project
+**Multilingual GenAI for citizen grievances.** Citizens describe a problem in any Indian language, by typing, speaking, or uploading a photo or PDF. GrievanceAI transcribes and translates it, classifies it into the right civic category, and routes the citizen to the correct government portal, with nearby offices on a map and step-by-step next actions.
 
-## Project Overview
+## Features
 
-BhashaFlow helps citizens describe grievances in Indian languages, uses AI to extract and translate the complaint, classifies it into the right civic category, and routes the user to the relevant government portal with next steps.
+- **Multimodal input:** typed text, voice recordings, and images/PDFs (including handwritten letters), in any Indian language.
+- **One-call AI pipeline:** a single Gemini multimodal request does OCR, speech-to-text, translation to English, summarisation and classification into 29 categories, returning structured JSON.
+- **Citizen verification:** the AI asks a yes/no confirmation question *in the citizen's own language* before the grievance is filed.
+- **Smart routing:** category-plus-state portal directory (CPGRAMS, Rail Madad, Cyber Crime portal, and more), expected resolution time, and AI-located nearby offices on a Leaflet map.
+- **Citizen dashboard:** grievance history, status timeline, and a downloadable summary PDF translated back into the citizen's language.
+- **Admin / authority dashboard:** filter, assign and update grievances, see analytics by status, category and language, and send resolution emails with the remark translated for the citizen.
+- **Auth:** email/password, Google OAuth, password reset and TOTP two-factor authentication (Supabase Auth).
+- **Automated follow-ups:** a daily `pg_cron` job emails citizens whose grievance has passed its expected resolution date.
+- **Graceful degradation:** Gemini calls fall through a list of models on quota or availability errors. Typed complaints fall back to a keyword classifier, so filing still works if the AI is down.
 
-- **Input modes:** text, voice/audio, image OCR, and optional supporting proof.
-- **AI pipeline:** OCR / speech-to-text -> Sarvam translation -> Gemini classification and summary -> portal routing.
-- **User flow:** describe -> verify AI understanding -> add details -> review -> receive portal/action guidance.
-- **Admin flow:** view, filter, assign, and update grievance statuses.
-
-## Current Cloud Architecture
-
-The production system is now distributed across three major providers so each workload can run where it fits best: Vercel for the static React client, Render for Node.js logic and Python AI services, and MongoDB Atlas for persistent metadata.
+## Architecture
 
 ```text
-Users
-  |
-  v
-Vercel Frontend (React + Vite SPA)
-  |
-  | HTTPS API calls
-  v
-Render Backend (Node.js + Express)
-  |
-  | Google OAuth callback + JWT issue
-  v
-Client session on Vercel
-
-Render Backend
-  |
-  | AI_ENGINE_URL / process-grievance-full
-  v
-Render AI Engine (FastAPI + Python)
-  |
-  | OCR, STT, translation, LLM analysis
-  v
-Gemini + Sarvam APIs
-
-Render Backend
-  |
-  v
-MongoDB Atlas
+React + Vite SPA (Vercel)
+   │  supabase-js ──────────────► Supabase Auth (email/password, Google, TOTP)
+   │  axios + JWT
+   ▼
+Supabase Edge Function `api`  (Deno + Hono)
+   ├── Supabase Postgres   profiles, grievances, ai_analyses, status_updates, training_data
+   ├── Supabase Storage    private bucket for attachments (served via signed URLs)
+   ├── Google Gemini       OCR · speech-to-text · translation · classification · office lookup
+   └── Gmail SMTP          resolution + follow-up emails
+pg_cron (daily 09:00 IST) ──► POST /api/cron/follow-up
 ```
 
-### Request Flow
+- The frontend only talks to Postgres through the API. Every table has RLS on and no policies, so the public key can't read or write data directly. Ownership and role checks live in the function.
+- All routes live under `https://<project>.supabase.co/functions/v1/api/...`.
 
-1. Users open the Vercel-hosted frontend.
-2. React calls the Render Node.js backend through the build-time `VITE_BACKEND_URL`.
-3. The backend handles email/password auth, Google OAuth, and JWT issuance.
-4. When a grievance is submitted, the backend stores a pending record and forwards media/text to the Render FastAPI AI engine.
-5. The AI engine calls EasyOCR, Sarvam, and Gemini as needed, then returns structured analysis.
-6. The backend stores metadata and AI output in MongoDB Atlas and returns verification/routing data to the frontend.
+## Tech stack
 
-## Component Notes
+| Layer | Tech |
+|---|---|
+| Frontend | React 19, Vite, React Router, Framer Motion, Leaflet, jsPDF |
+| API | Supabase Edge Functions (Deno), Hono |
+| Database / Storage / Auth | Supabase Postgres, Storage, Auth |
+| AI | Google Gemini (structured JSON output, multimodal) |
+| Scheduling | pg_cron + pg_net |
+| Hosting | Vercel (frontend), Supabase (backend) |
 
-### Frontend: Vercel
+## Project structure
 
-- React 18 + Vite single page app.
-- `frontend/vercel.json` rewrites all routes to `index.html`, so React Router works on refresh and direct links.
-- `VITE_BACKEND_URL` is injected during build/deploy so production talks to Render instead of `localhost`.
-- Docker local builds also pass `VITE_BACKEND_URL` as a build arg.
+```text
+frontend/                     React SPA
+  src/utils/supabase.js       Supabase client (auth)
+  src/utils/api.js            axios instance for the api function
+supabase/
+  functions/api/index.ts      all API routes (Hono)
+  functions/api/gemini.ts     Gemini pipeline + model fallback
+  functions/api/portalData.js portal directory and routing rules
+  functions/api/mailer.js     email templates (Gmail SMTP)
+  migrations/                 schema, storage bucket, cron job
+```
 
-### Backend: Render Node.js Service
+## Running locally
 
-- Express API with JWT auth, Google OAuth, grievance routes, admin routes, uploads, and scheduled follow-up emails.
-- CORS allows the local frontend and the live Vercel origin: `https://bhasha-flow.vercel.app`.
-- Uses `process.env.PORT || 5000`, which is required for Render port binding.
-- Reads `AI_ENGINE_URL` from the environment to call the FastAPI engine. Keep this value as a clean base URL without a trailing slash to avoid double-slash request paths.
-- Provides `GET /` as a lightweight health route for cloud checks and uptime pings.
+```bash
+cd frontend
+cp .env.example .env    # set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY
+npm install
+npm run dev             # http://localhost:3000
+```
 
-### AI Engine: Render FastAPI Service
+The frontend talks to the deployed Supabase project. To work on the API, use the [Supabase CLI](https://supabase.com/docs/guides/cli):
 
-- Python 3.11 + FastAPI service for OCR, translation, speech, and grievance processing.
-- `GET /` and `HEAD /` are both supported so Render and UptimeRobot checks receive `200 OK` instead of `405 Method Not Allowed`.
-- `WEB_CONCURRENCY` is configured in Render for the free-tier memory budget while running EasyOCR/Gemini workloads.
-- Main backend integration endpoint: `POST /process-grievance-full`.
+```bash
+supabase link --project-ref <project-ref>
+supabase db push                 # apply migrations
+supabase functions deploy api    # verify_jwt=false is set in supabase/config.toml
+```
 
-### Data and External Services
+### Edge Function secrets
 
-- MongoDB Atlas stores users, grievances, AI analysis, status updates, and training data.
-- Gemini handles structured classification/summarization.
-- Sarvam handles translation, speech-to-text, and text-to-speech services.
-- Secrets live in Render/Vercel environment variables and Jenkins credentials, not in source control.
+Set these in **Supabase dashboard → Edge Functions → Secrets** (see `.env.example`):
 
-## Cross-Service Connectivity
-
-| Connection Path | Security Method | Implementation |
+| Secret | Required | Purpose |
 |---|---|---|
-| Vercel -> Render Backend | CORS whitelist | `app.use(cors({ origin: [...] }))` includes the Vercel domain |
-| Google -> Render Backend | OAuth redirect allowlist | Google Cloud Console authorized redirect URI points to the Render backend callback |
-| Render Backend -> AI Engine | Service URL env var | `AI_ENGINE_URL` is configured in Render and Docker Compose |
-| Cloud -> External APIs | API keys | Render/Vercel env variables and Jenkins credentials |
-| UptimeRobot -> Render services | Health endpoints | `GET /` on Node.js, `GET/HEAD /` on FastAPI |
+| `GEMINI_API_KEY` | yes | Gemini API key |
+| `GEMINI_MODELS` | no | Comma-separated model fallback order |
+| `GMAIL_USER`, `GMAIL_PASS` | no | Gmail address + App Password for emails (skipped when unset) |
+| `FRONTEND_URL` | no | Base URL used in email links |
 
-## DevOps and CI/CD
+`SUPABASE_URL`, `SUPABASE_ANON_KEY` and `SUPABASE_SERVICE_ROLE_KEY` are injected automatically.
 
-### Previous Pipeline
+### Making an admin
 
-```text
-Git push -> Jenkins local build -> Docker build -> Ngrok tunnel
+New sign-ups are citizens. To promote an account, run this in the Supabase SQL editor:
+
+```sql
+update public.profiles set role = 'admin' where email = 'you@example.com';
 ```
 
-### Current Pipeline
+## API overview
 
-```text
-Git push -> GitHub webhook -> Render and Vercel parallel builds
-         -> automated health checks -> zero-downtime service swap
-```
+| Method | Route | Who |
+|---|---|---|
+| POST | `/api/auth/register` | public |
+| GET/PUT | `/api/auth/profile` | signed in |
+| POST | `/api/auth/change-password` | signed in |
+| POST | `/api/grievance/ingest` | citizen (multipart: `text`, `image`, `audio`) |
+| POST | `/api/grievance/confirm`, `/api/grievance/submit` | citizen |
+| GET | `/api/grievance/recent`, `/api/grievance/:id` | citizen (own grievances) |
+| POST | `/api/grievance/:id/feedback`, `/api/grievance/:id/translate-analysis` | citizen |
+| GET | `/api/admin/grievances`, `/api/admin/grievance/:id`, `/api/admin/stats`, `/api/admin/ai-insights` | admin / authority |
+| PUT | `/api/admin/grievance/:id/status`, `/api/admin/grievance/:id/assign` | admin / authority |
+| POST | `/api/admin/grievance/:id/notify-citizen` | admin / authority |
+| GET | `/api/public/stats` | public |
 
-Jenkins now acts as the **pre-flight gatekeeper**. It still builds and runs the Docker stack locally through `docker-compose.yml` plus `docker-compose.ci.yml`, but its purpose is to catch container, syntax, dependency, and integration failures before the code reaches Render/Vercel.
-
-CI port mapping:
-
-| Service | Local Dev | Jenkins CI |
-|---|---:|---:|
-| Frontend | 3000 | 4000 |
-| Backend | 5000 | 6000 |
-| AI Engine | 8000 | 9000 |
-
-## Stability
-
-Render free-tier services can sleep after inactivity. To reduce cold-start problems:
-
-- UptimeRobot pings the `/` route of both Render services every 5 minutes.
-- Node.js returns a lightweight JSON response from `GET /`.
-- FastAPI supports both `GET /` and `HEAD /`, avoiding expensive AI work during health checks.
-- AI concurrency is limited with `WEB_CONCURRENCY` in Render to fit the 512 MB free-tier memory profile.
-
-## Key Features
-
-- Multilingual grievance submission across Indian languages.
-- Text, audio, and image-based complaint intake.
-- Google OAuth and email/password authentication.
-- Forgot-password flow with secure email reset tokens.
-- AI verification step before final submission.
-- Category, priority, summary, keyword, and portal recommendation output.
-- Citizen dashboard with grievance history and status.
-- Admin dashboard for filtering, assignment, and status updates.
-- PDF summary generation support.
-
-## Local Development
-
-### Prerequisites
-
-- Git
-- Docker Desktop
-- VS Code or another editor
-
-### Configure Environment
+## Smoke test
 
 ```bash
-git clone https://github.com/saumya-0611/BhashaFlow.git
-cd BhashaFlow
-cp .env.example .env
+SUPABASE_URL=https://<project-ref>.supabase.co SUPABASE_ANON_KEY=<publishable-key> node scripts/smoke.mjs
 ```
 
-Fill in `.env`:
-
-```env
-MONGO_URI=<your_mongo_uri>
-JWT_SECRET=<your_jwt_secret>
-
-GMAIL_USER=<your_gmail>
-GMAIL_PASS=<your_gmail_app_password>
-TECH_LEAD_EMAIL=<tech_lead_email>
-
-SARVAM_API_KEY=<your_sarvam_key>
-GEMINI_API_KEY=<your_gemini_key>
-GEMINI_MODEL=gemini-3-flash-preview
-
-GOOGLE_CLIENT_ID=<your_google_client_id>
-GOOGLE_CLIENT_SECRET=<your_google_client_secret>
-VITE_GOOGLE_CLIENT_ID=<same_as_GOOGLE_CLIENT_ID>
-
-FRONTEND_URL=http://localhost:3000
-BACKEND_URL=http://localhost:5000
-VITE_BACKEND_URL=http://localhost:5000
-```
-
-### Run Locally
-
-```bash
-docker compose up --build
-```
-
-| Service | URL |
-|---|---|
-| Frontend | `http://localhost:3000` |
-| Backend API | `http://localhost:5000` |
-| AI Engine | `http://localhost:8000` |
-
-Use `docker compose up --build` after code changes, dependency changes, or `.env` changes because the app code is baked into the Docker images.
-
-## Project Structure
-
-```text
-BhashaFlow/
-|-- frontend/                  React + Vite frontend
-|   |-- vercel.json            SPA rewrite config for Vercel
-|   |-- Dockerfile             Build-time Vite env injection
-|   `-- src/
-|       |-- pages/             Citizen, admin, auth, and grievance pages
-|       |-- components/        Shared UI components
-|       `-- utils/api.js       Central Axios client
-|-- backend/                   Node.js + Express backend
-|   |-- server.js              App bootstrap, CORS, health check, routes
-|   |-- routes/                Auth, Google OAuth, grievance, admin routes
-|   |-- models/                Mongoose schemas
-|   `-- utils/                 Portal data, mailer, cron jobs
-|-- ai-engine/                 FastAPI AI service
-|   |-- main.py                Health routes and AI endpoints
-|   `-- services/              Gemini, Sarvam, OCR, speech, grievance logic
-|-- docker-compose.yml         Local development stack
-|-- docker-compose.ci.yml      Jenkins CI override
-|-- Jenkinsfile                Docker pre-flight CI pipeline
-`-- .env.example               Environment variable template
-```
-
-## Troubleshooting
-
-| Issue | Fix |
-|---|---|
-| React route refresh returns 404 on Vercel | Confirm `frontend/vercel.json` is deployed with the SPA rewrite |
-| Frontend calls localhost in production | Check `VITE_BACKEND_URL` in Vercel and rebuild |
-| Backend fails to start on Render | Confirm it uses `process.env.PORT` and required env vars are set |
-| AI call has a double slash in URL | Set `AI_ENGINE_URL` without a trailing slash |
-| FastAPI health check returns 405 | Confirm `@app.head("/")` is deployed |
-| Render service sleeps | Confirm UptimeRobot is pinging `/` every 5 minutes |
-| Category enum errors | Keep Gemini schema, Mongoose enum, and portal data categories aligned |
-
-## Team
-
-- **Tech Lead / DevOps:** Saumya Srivastava - CI/CD, Docker, deployment, cross-service integration.
-- **Frontend:** `frontend/`
-- **Backend:** `backend/`
-- **AI/ML:** `ai-engine/`
-
-## License
-
-This project is developed as part of the NIIT University B.Tech CSE Capstone Program.
+Runs register → login → ingest → confirm → submit → dashboard → admin-guard against the deployed API.
